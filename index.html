@@ -216,6 +216,46 @@
     display:block;
     object-fit:cover;object-position:center;
   }
+
+  /* Hero interior carousel buttons */
+  .hero-nav-btn{
+    position:absolute;
+    top:50%;
+    transform:translateY(-50%);
+    z-index:3; /* above the badge */
+    width:46px;height:46px;
+    border-radius:999px;
+    border:1.5px solid rgba(255,255,255,.35);
+    background:rgba(0,0,0,.28);
+    color:var(--cream);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    cursor:pointer;
+    transition:background .18s ease, border-color .18s ease, color .18s ease, box-shadow .18s ease;
+    backdrop-filter: blur(8px);
+  }
+  .hero-nav-btn svg{
+    width:22px;height:22px;
+    stroke:currentColor;
+    fill:none;
+    stroke-width:2.4;
+    stroke-linecap:round;
+    stroke-linejoin:round;
+  }
+  .hero-nav-btn:hover{
+    background:rgba(255,255,255,.06);
+    border-color:#fff; /* highlighted outline on hover */
+    color:#fff;
+    box-shadow:0 14px 40px rgba(0,0,0,.35);
+  }
+  .hero-nav-btn:focus-visible{
+    outline:2px solid #fff;
+    outline-offset:2px;
+  }
+  .hero-nav-prev{left:16px;}
+  .hero-nav-next{right:16px;}
+
   .hero-visual .badge{
     position:absolute;bottom:24px;left:24px;
     background:rgba(255,255,255,.95);
@@ -818,7 +858,19 @@
   </div>
   <div class="hero-visual-wrap" id="heroParallax">
     <div class="hero-visual">
-      <img src="hero-storefront.png" alt="FreshFace Unisex Salon storefront signage on brick wall" class="hero-feature-img" width="1200" height="1200" loading="eager" decoding="async">
+      <img id="heroFeatureImg" src="interior.webp" alt="FreshFace Unisex Salon interior image 1" class="hero-feature-img" width="1200" height="1200" loading="eager" decoding="async">
+
+      <button class="hero-nav-btn hero-nav-prev" id="heroPrevBtn" type="button" aria-label="Previous interior image">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M14.5 5.5 L8 12 L14.5 18.5"/>
+        </svg>
+      </button>
+      <button class="hero-nav-btn hero-nav-next" id="heroNextBtn" type="button" aria-label="Next interior image">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M9.5 5.5 L16 12 L9.5 18.5"/>
+        </svg>
+      </button>
+
       <div class="badge">
         <strong><span class="counter" id="googleRating" data-target="4.9" data-decimals="1">0</span>★</strong>
         <span>Rated by <span class="counter" id="googleReviewCount" data-target="1752" data-suffix="+">0</span> happy customers</span>
@@ -1717,6 +1769,36 @@
   };
 
   initHeroLoad();
+
+  // Hero interior carousel (Previous/Next inside the hero box)
+  (function initHeroCarousel() {
+    const img = document.getElementById('heroFeatureImg');
+    const prevBtn = document.getElementById('heroPrevBtn');
+    const nextBtn = document.getElementById('heroNextBtn');
+    if (!img || !prevBtn || !nextBtn) return;
+
+    const slides = [
+      { src: 'interior.webp', alt: 'FreshFace Unisex Salon interior image 1' },
+      { src: 'interior 2.webp', alt: 'FreshFace Unisex Salon interior image 2' },
+      { src: 'interior 3.png', alt: 'FreshFace Unisex Salon interior image 3' }
+    ];
+
+    // Preload for snappy switching
+    slides.forEach(s => {
+      const pre = new Image();
+      pre.src = s.src;
+    });
+
+    let idx = 0;
+    const setIndex = (newIdx) => {
+      idx = (newIdx + slides.length) % slides.length;
+      img.src = slides[idx].src;
+      img.alt = slides[idx].alt;
+    };
+
+    prevBtn.addEventListener('click', () => setIndex(idx - 1));
+    nextBtn.addEventListener('click', () => setIndex(idx + 1));
+  })();
 })();
 </script>
 
