@@ -7,6 +7,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300..700&family=Manrope:wght@400;500;600;700;800&family=Nunito:wght@700;800&display=swap" rel="stylesheet">
+<link rel="preload" as="image" href="interior 2.webp">
+<link rel="preload" as="image" href="interior 3.png">
 <style>
   :root{
     --green:#8DC455;
@@ -219,14 +221,20 @@
     transition:transform .75s var(--ease-out), opacity .75s var(--ease-out);
     will-change:transform, opacity;
   }
+  .hero-slide-frame.is-incoming{z-index:2;}
+  .hero-slide-frame.is-carousel-slide .badge{
+    opacity:1;
+    transform:scale(1);
+    animation:none;
+  }
   .hero-slide-frame.no-transition{transition:none;}
   .hero-slide-frame.is-off-left{
     transform:translate3d(-105%,0,0);
-    opacity:.18;
+    opacity:1;
   }
   .hero-slide-frame.is-off-right{
     transform:translate3d(105%,0,0);
-    opacity:.18;
+    opacity:1;
   }
   .hero-feature-img{
     position:absolute;inset:0;
@@ -583,11 +591,12 @@
     flex:1;min-height:280px;
     display:flex;align-items:center;justify-content:center;
     position:relative;
+    overflow:hidden;
   }
   .review-card{
     text-align:center;width:100%;
-    opacity:0;transform:translate3d(0,16px,0);
-    transition:opacity .45s var(--ease-out), transform .45s var(--ease-out);
+    opacity:0;transform:translate3d(105%,0,0);
+    transition:opacity .75s var(--ease-out), transform .75s var(--ease-out);
     position:absolute;inset:0;
     display:flex;flex-direction:column;align-items:center;justify-content:center;
     padding:0;
@@ -597,6 +606,16 @@
     opacity:1;transform:translate3d(0,0,0);
     position:relative;pointer-events:auto;
   }
+  .review-card.is-entering,
+  .review-card.is-exiting{
+    opacity:1;
+    position:absolute;inset:0;
+    pointer-events:none;
+  }
+  .review-card.from-left{transform:translate3d(-105%,0,0);}
+  .review-card.from-right{transform:translate3d(105%,0,0);}
+  .review-card.to-left{transform:translate3d(-105%,0,0);}
+  .review-card.to-right{transform:translate3d(105%,0,0);}
   .review-rating-box{
     width:100%;
     background:#fff;
@@ -1737,18 +1756,57 @@
   const reviewPrev = document.getElementById('reviewPrev');
   const reviewNext = document.getElementById('reviewNext');
   let reviewIndex = 0;
+  let reviewAnimating = false;
+  let reviewTimer = null;
 
-  function showReview(index) {
+  function showReview(index, direction) {
     if (!reviewCards.length) return;
-    reviewIndex = (index + reviewCards.length) % reviewCards.length;
-    reviewCards.forEach((card, i) => {
-      card.classList.toggle('is-active', i === reviewIndex);
+    const nextIndex = (index + reviewCards.length) % reviewCards.length;
+    if (nextIndex === reviewIndex || reviewAnimating) return;
+
+    const currentCard = reviewCards[reviewIndex];
+    const nextCard = reviewCards[nextIndex];
+    const isPrev = direction === 'prev';
+    const enterClass = isPrev ? 'from-left' : 'from-right';
+    const exitClass = isPrev ? 'to-right' : 'to-left';
+
+    if (prefersReducedMotion) {
+      currentCard.classList.remove('is-active');
+      nextCard.classList.add('is-active');
+      reviewIndex = nextIndex;
+      return;
+    }
+
+    reviewAnimating = true;
+    nextCard.classList.remove('to-left', 'to-right', 'from-left', 'from-right', 'is-exiting');
+    nextCard.classList.add('is-entering', enterClass);
+
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        currentCard.classList.add('is-exiting', exitClass);
+        nextCard.classList.add('is-active');
+        nextCard.classList.remove(enterClass);
+      });
     });
+
+    setTimeout(() => {
+      currentCard.classList.remove('is-active', 'is-exiting', exitClass);
+      nextCard.classList.remove('is-entering');
+      reviewIndex = nextIndex;
+      reviewAnimating = false;
+    }, 780);
+  }
+
+  function restartReviewAuto() {
+    if (reviewTimer) clearInterval(reviewTimer);
+    if (prefersReducedMotion || reviewCards.length < 2) return;
+    reviewTimer = setInterval(() => showReview(reviewIndex + 1, 'next'), 3000);
   }
 
   if (reviewPrev && reviewNext) {
-    reviewPrev.addEventListener('click', () => showReview(reviewIndex - 1));
-    reviewNext.addEventListener('click', () => showReview(reviewIndex + 1));
+    reviewPrev.addEventListener('click', () => { showReview(reviewIndex - 1, 'prev'); restartReviewAuto(); });
+    reviewNext.addEventListener('click', () => { showReview(reviewIndex + 1, 'next'); restartReviewAuto(); });
+    restartReviewAuto();
   }
 
   // Book triggers — scroll to single booking form
@@ -1800,11 +1858,12 @@
 
   // Hero interior carousel (Previous/Next inside the hero box)
   (function initHeroCarousel() {
-    const slideFrame = document.getElementById('heroSlideFrame');
+    const visual = document.querySelector('.hero-visual');
+    let currentFrame = document.getElementById('heroSlideFrame');
     const img = document.getElementById('heroFeatureImg');
     const prevBtn = document.getElementById('heroPrevBtn');
     const nextBtn = document.getElementById('heroNextBtn');
-    if (!slideFrame || !img || !prevBtn || !nextBtn) return;
+    if (!visual || !currentFrame || !img || !prevBtn || !nextBtn) return;
 
     const slides = [
       { src: 'interior.webp', alt: 'FreshFace Unisex Salon interior image 1' },
@@ -1822,56 +1881,75 @@
     let isAnimating = false;
     let autoTimer = null;
 
-    const setIndexImmediate = (newIdx) => {
-      idx = (newIdx + slides.length) % slides.length;
-      img.src = slides[idx].src;
-      img.alt = slides[idx].alt;
+    const buildSlideFrame = (slide, positionClass) => {
+      const frame = document.createElement('div');
+      frame.className = 'hero-slide-frame is-carousel-slide no-transition ' + positionClass;
+      frame.setAttribute('aria-hidden', 'true');
+      frame.innerHTML =
+        '<img src="' + slide.src + '" alt="' + slide.alt + '" class="hero-feature-img" width="1200" height="1200" loading="eager" decoding="async">' +
+        '<div class="badge">' +
+          '<strong>4.9★</strong>' +
+          '<span>Rated by 1752+ happy customers</span>' +
+        '</div>';
+      return frame;
+    };
+
+    const setFrameContent = (frame, slide) => {
+      const frameImg = frame.querySelector('.hero-feature-img');
+      if (!frameImg) return;
+      frameImg.src = slide.src;
+      frameImg.alt = slide.alt;
     };
 
     const setIndexWithSwipe = (newIdx, direction) => {
+      const next = (newIdx + slides.length) % slides.length;
+      if (next === idx) return;
+
       if (prefersReducedMotion) {
-        setIndexImmediate(newIdx);
+        idx = next;
+        setFrameContent(currentFrame, slides[idx]);
         return;
       }
       if (isAnimating) return;
       isAnimating = true;
 
-      const next = (newIdx + slides.length) % slides.length;
       const exitClass = direction === 'prev' ? 'is-off-right' : 'is-off-left';
       const enterClass = direction === 'prev' ? 'is-off-left' : 'is-off-right';
 
-      slideFrame.classList.remove('no-transition', 'is-off-left', 'is-off-right');
-      slideFrame.classList.add(exitClass);
+      const incomingFrame = buildSlideFrame(slides[next], enterClass);
+      incomingFrame.classList.add('is-incoming');
+      visual.insertBefore(incomingFrame, prevBtn);
 
-      // Swipe out, swap image while offscreen, then swipe the new slide in.
-      setTimeout(() => {
-        idx = next;
-        img.src = slides[idx].src;
-        img.alt = slides[idx].alt;
-        slideFrame.classList.add('no-transition');
-        slideFrame.classList.remove(exitClass);
-        slideFrame.classList.add(enterClass);
+      currentFrame.classList.remove('no-transition', 'is-off-left', 'is-off-right', 'is-incoming');
 
-        // Ensure the browser registers the offscreen reset before swiping in.
+      // Keep the current slide visible while the next one swipes in.
+      requestAnimationFrame(() => {
         requestAnimationFrame(() => {
-          requestAnimationFrame(() => {
-            slideFrame.classList.remove('no-transition', enterClass);
-            setTimeout(() => { isAnimating = false; }, 780);
-          });
+          currentFrame.classList.add(exitClass);
+          incomingFrame.classList.remove('no-transition', enterClass);
         });
-      }, 760);
+      });
+
+      setTimeout(() => {
+        currentFrame.remove();
+        incomingFrame.classList.remove('is-incoming');
+        incomingFrame.removeAttribute('aria-hidden');
+        currentFrame = incomingFrame;
+        idx = next;
+        isAnimating = false;
+      }, 780);
     };
 
     const restartAuto = () => {
       if (autoTimer) clearInterval(autoTimer);
       if (prefersReducedMotion) return;
-      autoTimer = setInterval(() => setIndexWithSwipe(idx + 1, 'next'), 4000);
+      autoTimer = setInterval(() => setIndexWithSwipe(idx + 1, 'next'), 3000);
     };
 
     prevBtn.addEventListener('click', () => { setIndexWithSwipe(idx - 1, 'prev'); restartAuto(); });
     nextBtn.addEventListener('click', () => { setIndexWithSwipe(idx + 1, 'next'); restartAuto(); });
 
-    // Auto-advance every 4 seconds
+    // Auto-advance every 3 seconds
     restartAuto();
 
     // Pause auto-advance when tab isn't visible
