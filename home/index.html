@@ -156,10 +156,10 @@
   .nav-links a:not(.btn)::after{
     content:'';position:absolute;left:0;bottom:0;
     width:0;height:2px;background:var(--green);
-    transition:none;
+    transition:width .28s var(--ease-out);
   }
   .nav-links a:not(.btn):hover::after,
-  .nav-links a:not(.btn).is-active::after{width:0;}
+  .nav-links a:not(.btn).is-active::after{width:100%;}
   .nav-links a:not(.btn).is-active{color:var(--cream);}
   .nav-links a:not(.btn){color:var(--cream);}
   .nav-toggle{display:none;background:none;border:none;font-size:1.6rem;cursor:pointer;color:var(--cream);}
@@ -216,6 +216,15 @@
     font-size:clamp(1.7rem,3vw,2.3rem);
     font-weight:900;
     line-height:1;
+    white-space:nowrap;
+  }
+  .rating-star{
+    display:inline;
+    font-size:1em;
+    margin-left:4px;
+    color:var(--green);
+    line-height:1;
+    vertical-align:baseline;
   }
   .hero-stat span{
     display:block;
@@ -965,7 +974,7 @@
     </div>
     <div class="hero-stats hero-load" data-delay="640" aria-label="FreshFace highlights">
       <div class="hero-stat">
-        <strong>4.9â˜…</strong>
+        <strong>4.9<span class="rating-star">&#9733;</span></strong>
         <span>Customer Rating</span>
       </div>
       <div class="hero-stat">
@@ -973,7 +982,7 @@
         <span>Happy Clients</span>
       </div>
       <div class="hero-stat">
-        <strong>10+</strong>
+        <strong>3+</strong>
         <span>Years Experience</span>
       </div>
     </div>
@@ -984,7 +993,7 @@
         <img id="heroFeatureImg" src="/interior.webp" alt="FreshFace Unisex Salon interior image 1" class="hero-feature-img" width="1200" height="1200" loading="eager" decoding="async">
 
         <div class="badge">
-          <strong><span class="counter" id="googleRating" data-target="4.9" data-decimals="1">0</span>â˜…</strong>
+          <strong><span class="counter" id="googleRating" data-target="4.9" data-decimals="1">0</span><span class="rating-star">&#9733;</span></strong>
           <span>Rated by <span class="counter" id="googleReviewCount" data-target="1752" data-suffix="+">0</span> happy customers</span>
         </div>
       </div>
@@ -1954,7 +1963,7 @@
       frame.innerHTML =
         '<img src="' + slide.src + '" alt="' + slide.alt + '" class="hero-feature-img" width="1200" height="1200" loading="eager" decoding="async">' +
         '<div class="badge">' +
-          '<strong>4.9â˜…</strong>' +
+          '<strong>4.9<span class="rating-star">&#9733;</span></strong>' +
           '<span>Rated by 1752+ happy customers</span>' +
         '</div>';
       return frame;

@@ -46,7 +46,18 @@ nav{
   position:relative;
   padding:6px 0;
 }
-.nav-links a:not(.btn)::after{content:'';position:absolute;left:0;bottom:0;width:0;height:2px;background:var(--green);}
+.nav-links a:not(.btn):not(.btn-book)::after{
+  content:'';
+  position:absolute;
+  left:0;
+  bottom:0;
+  width:0;
+  height:2px;
+  background:var(--green);
+  transition:width .25s ease;
+}
+.nav-links a:not(.btn):not(.btn-book):hover::after,
+.nav-links a:not(.btn):not(.btn-book).active::after{width:100%;}
 .btn-book{
   display:inline-flex;
   align-items:center;

@@ -72,7 +72,7 @@
     transition:width .25s ease;
   }
   .nav-links a:not(.btn):hover::after,
-  .nav-links a:not(.btn).active::after{width:0;}
+  .nav-links a:not(.btn).active::after{width:100%;}
   .btn{
     display:inline-flex;
     align-items:center;
@@ -86,15 +86,6 @@
     transition:background .2s ease, transform .2s ease;
   }
   .btn:hover{background:var(--green-dark);transform:translateY(-2px);}
-  .hero-bar{
-    background:linear-gradient(135deg,var(--green),var(--green-dark));
-    color:var(--black);
-    padding:15px 8vw;
-    font-size:.78rem;
-    font-weight:900;
-    letter-spacing:.12em;
-    text-transform:uppercase;
-  }
   main{padding:70px 8vw 90px;}
   .section-head{
     max-width:760px;
@@ -133,7 +124,7 @@
     border:1px solid var(--line);
     border-radius:18px;
     overflow:hidden;
-    min-height:450px;
+    min-height:0;
     color:inherit;
     transition:border-color .22s ease, transform .22s ease, box-shadow .22s ease;
   }
@@ -143,7 +134,7 @@
     box-shadow:0 18px 48px rgba(0,0,0,.24);
   }
   .service-visual{
-    height:240px;
+    aspect-ratio:1/1;
     background:linear-gradient(135deg, rgba(141,196,85,.92), rgba(101,141,61,.9));
     display:flex;
     align-items:center;
@@ -181,7 +172,6 @@
     .nav-links{flex-wrap:wrap;gap:14px;}
     .services-grid{grid-template-columns:1fr;}
     main{padding:54px 6vw 76px;}
-    .hero-bar{padding:13px 6vw;}
   }
 </style>
 </head>
@@ -199,8 +189,6 @@
     </div>
   </nav>
 </header>
-
-<div class="hero-bar">Our Services â€” Expert care for everyone</div>
 
 <main>
   <div class="section-head">
