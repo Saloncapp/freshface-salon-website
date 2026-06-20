@@ -16,6 +16,13 @@
     const cssName = '--' + key.replace(/[A-Z]/g, m => '-' + m.toLowerCase());
     root.style.setProperty(cssName, value);
   });
+  root.style.setProperty('--bg', theme.black);
+  root.style.setProperty('--bg-card', theme.surface);
+  root.style.setProperty('--bg-input', theme.charcoal);
+  root.style.setProperty('--green-lite', theme.green);
+  root.style.setProperty('--white', theme.cream);
+  root.style.setProperty('--muted', theme.gray);
+  root.style.setProperty('--border', theme.line);
 
   if (!document.getElementById('freshface-theme-styles')) {
     const style = document.createElement('style');
@@ -38,6 +45,8 @@
       padding: 16px 36px !important;
       border: 2px solid transparent;
       border-radius: 999px;
+      background: var(--green) !important;
+      color: var(--cream) !important;
       font-size: 1rem !important;
       font-weight: 800 !important;
       line-height: 1.6;
@@ -66,6 +75,122 @@
     .nav-links a:not(.btn):not(.btn-book).active::after,
     .nav-links a:not(.btn):not(.btn-book).is-active::after {
       width: 100% !important;
+    }
+
+    .ff-common-header {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      background: rgba(13,13,13,.94) !important;
+      border-bottom: 1px solid var(--line) !important;
+      backdrop-filter: blur(12px);
+    }
+
+    .ff-common-header nav {
+      min-height: 97px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 18px 8vw;
+    }
+
+    .ff-common-logo,
+    .ff-common-footer-logo {
+      color: var(--cream);
+      font-family: var(--display, 'Fraunces', serif);
+      font-size: 1.65rem;
+      font-weight: 800;
+      line-height: 1;
+      text-decoration: none;
+    }
+
+    .ff-common-logo span,
+    .ff-common-footer-logo span {
+      color: var(--green);
+    }
+
+    .ff-common-footer {
+      background: var(--black) !important;
+      color: var(--cream) !important;
+      padding: 70px 8vw 30px !important;
+      border-top: 1px solid var(--line) !important;
+    }
+
+    .ff-common-footer-grid {
+      display: grid;
+      grid-template-columns: 1.4fr 1fr 1fr 1.25fr;
+      gap: 50px;
+      margin-bottom: 50px;
+    }
+
+    .ff-common-footer p,
+    .ff-common-footer a,
+    .ff-common-footer li,
+    .ff-common-footer span {
+      color: var(--gray);
+      font-size: .92rem;
+    }
+
+    .ff-common-footer h4 {
+      color: var(--green);
+      font-size: .85rem;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      margin-bottom: 18px;
+    }
+
+    .ff-common-footer ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      padding: 0;
+      margin: 0;
+    }
+
+    .ff-common-social {
+      display: flex;
+      gap: 12px;
+      margin-top: 18px;
+    }
+
+    .ff-common-social a {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      border: 1.5px solid rgba(141,196,85,.35);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--green);
+      background: rgba(141,196,85,.08);
+      font-weight: 800;
+    }
+
+    .ff-common-footer-bottom {
+      border-top: 1px solid var(--line);
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      padding-top: 24px;
+    }
+
+    @media (max-width: 860px) {
+      .ff-common-header nav {
+        min-height: 0;
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 16px;
+        padding: 18px 6vw;
+      }
+
+      .ff-common-footer-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .ff-common-footer-bottom {
+        flex-direction: column;
+      }
     }
 
     .hero-load {
@@ -129,6 +254,101 @@
 
   const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   let revealObserver = null;
+
+  function isHomePage() {
+    return window.location.pathname.replace(/\\/g, '/').endsWith('/home/index.html');
+  }
+
+  function commonHeader() {
+    return `
+      <header class="ff-common-header">
+        <nav>
+          <a href="/home/index.html" class="ff-common-logo"><span>Fresh</span>Face</a>
+          <div class="nav-links">
+            <a href="/home/index.html">Home</a>
+            <a href="/services/index.html">Services</a>
+            <a href="/about-us/index.html">About Us</a>
+            <a href="/gallery/index.html">Gallery</a>
+            <a href="/contact-us/index.html">Contact</a>
+            <a href="/home/index.html#booking-section" class="btn-book">Book Now</a>
+          </div>
+        </nav>
+      </header>
+    `;
+  }
+
+  function commonFooter() {
+    return `
+      <footer class="ff-common-footer">
+        <div class="ff-common-footer-grid">
+          <div>
+            <div class="ff-common-footer-logo"><span>Fresh</span>Face</div>
+            <p>FreshFace Unisex Salon - where everyone gets the care, style, and confidence they deserve.</p>
+            <div class="ff-common-social">
+              <a href="https://www.instagram.com/freshface_kumbakonam?igsh=enl0ajhyMTdsOWU1&utm_source=qr" target="_blank" rel="noopener noreferrer" aria-label="Instagram">IG</a>
+              <a href="https://www.facebook.com/profile.php?id=100095534824375" target="_blank" rel="noopener noreferrer" aria-label="Facebook">f</a>
+              <a href="https://youtube.com/@freshfaceunisexsalon?si=aawKs8U1ShjKmrVN" target="_blank" rel="noopener noreferrer" aria-label="YouTube">YT</a>
+            </div>
+          </div>
+          <div>
+            <h4>Quick Links</h4>
+            <ul>
+              <li><a href="/home/index.html">Home</a></li>
+              <li><a href="/services/index.html">Services</a></li>
+              <li><a href="/about-us/index.html">About Us</a></li>
+              <li><a href="/gallery/index.html">Gallery</a></li>
+              <li><a href="/contact-us/index.html">Contact</a></li>
+            </ul>
+          </div>
+          <div>
+            <h4>Services</h4>
+            <ul>
+              <li><a href="/services/hair/index.html">Hair & Styling</a></li>
+              <li><a href="/services/skin-facial/index.html">Skin & Facial</a></li>
+              <li><a href="/services/others/index.html">Nails</a></li>
+              <li><a href="/services/others/index.html">Grooming</a></li>
+              <li><a href="/services/makeup/index.html">Bridal & Makeup</a></li>
+            </ul>
+          </div>
+          <div>
+            <h4>Our Outlets</h4>
+            <ul>
+              <li><strong style="color:var(--cream);">Kumbakonam</strong> - TSR Big Street</li>
+              <li><a href="tel:+917380478047">+91 73804 78047</a></li>
+              <li><strong style="color:var(--cream);">Karikulam</strong> - Near Axis Bank</li>
+              <li><a href="tel:+916380453804">+91 63804 53804</a></li>
+              <li><a href="mailto:freshfacekumbakonam@gmail.com">freshfacekumbakonam@gmail.com</a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="ff-common-footer-bottom">
+          <span>(c) 2026 FreshFace Unisex Salon. All rights reserved.</span>
+          <span>Designed with care.</span>
+        </div>
+      </footer>
+    `;
+  }
+
+  function applyCommonShell() {
+    if (isHomePage()) return;
+
+    const header = document.querySelector('header');
+    const standaloneNav = !header ? document.querySelector('body > nav') : null;
+    if (header) {
+      header.outerHTML = commonHeader();
+    } else if (standaloneNav) {
+      standaloneNav.outerHTML = commonHeader();
+    } else {
+      document.body.insertAdjacentHTML('afterbegin', commonHeader());
+    }
+
+    const footer = document.querySelector('footer');
+    if (footer) {
+      footer.outerHTML = commonFooter();
+    } else {
+      document.body.insertAdjacentHTML('beforeend', commonFooter());
+    }
+  }
 
   function toArray(list) {
     return Array.prototype.slice.call(list);
@@ -205,8 +425,12 @@
   };
 
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => initFreshFaceAnimations(document), { once: true });
+    document.addEventListener('DOMContentLoaded', () => {
+      applyCommonShell();
+      initFreshFaceAnimations(document);
+    }, { once: true });
   } else {
+    applyCommonShell();
     initFreshFaceAnimations(document);
   }
 })();

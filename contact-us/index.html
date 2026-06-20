@@ -124,8 +124,8 @@
       gap: 10px;
     }
     .hours-row {
-      display: flex;
-      justify-content: space-between;
+      display: grid;
+      grid-template-columns: 1fr 28px 1fr;
       align-items: center;
       padding: 12px 16px;
       background: var(--bg-card);
@@ -134,12 +134,13 @@
       font-size: 0.85rem;
     }
     .hours-row .day { color: var(--muted); }
-    .hours-row .time { font-weight: 600; color: var(--white); }
+    .hours-row .time { font-weight: 600; color: var(--white); text-align:right; }
     .hours-row .dot {
       width: 7px; height: 7px;
       border-radius: 50%;
       background: var(--green-lite);
       box-shadow: 0 0 6px var(--green-lite);
+      justify-self:center;
     }
 
     /* OUTLET CARDS */
@@ -364,6 +365,7 @@
     .form-note span { color: var(--green-lite); }
 
     .btn-submit {
+      display: block;
       width: 100%;
       background: var(--green-lite);
       color: #111;
@@ -376,6 +378,8 @@
       cursor: pointer;
       transition: background 0.2s;
       letter-spacing: 0.3px;
+      text-align: center;
+      text-decoration: none;
     }
     .btn-submit:hover { background: var(--green); }
 
@@ -759,7 +763,7 @@
 
       <p class="form-note"><span>*</span> Name, mobile, outlet, and service are required. We'll reach out to confirm your slot.</p>
 
-      <button class="btn-submit">Book Appointment</button>
+      <a class="btn-submit" href="/home/index.html#booking-section">Book Appointment</a>
 
       <div class="wa-strip">
         <span>Prefer WhatsApp?</span>
@@ -822,5 +826,6 @@
     </div>
   </footer>
 
+<script type="module" src="/freshface-theme.js"></script>
 </body>
 </html>

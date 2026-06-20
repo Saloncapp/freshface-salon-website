@@ -678,6 +678,7 @@
     opacity:0;transform:translate3d(105%,0,0);
     transition:opacity 1.5s var(--ease-out), transform 1.5s var(--ease-out);
     position:absolute;inset:0;
+    z-index:0;
     display:flex;flex-direction:column;align-items:center;justify-content:center;
     padding:0;
     pointer-events:none;
@@ -685,6 +686,7 @@
   .review-card.no-transition{transition:none;}
   .review-card.is-active{
     opacity:1;transform:translate3d(0,0,0);
+    z-index:2;
     pointer-events:auto;
   }
   .review-card.is-entering,
@@ -693,6 +695,9 @@
     position:absolute;inset:0;
     pointer-events:none;
   }
+  .review-card.is-entering{z-index:3;}
+  .review-card.is-exiting{z-index:1;}
+  .review-card.is-wrap-incoming{z-index:4;}
   .review-card.from-left,
   .review-card.to-left{transform:translate3d(-105%,0,0);}
   .review-card.from-right,
@@ -841,6 +846,42 @@
     border-color:var(--green);
   }
   textarea{resize:vertical;min-height:120px;}
+  .field-error{
+    display:none;
+    margin-top:7px;
+    color:#ffb4a8;
+    font-size:.78rem;
+    font-weight:700;
+    line-height:1.35;
+  }
+  .has-error input,
+  .has-error select{
+    border-color:#ff8a78 !important;
+    box-shadow:0 0 0 1px rgba(255,138,120,.28);
+  }
+  .has-error .field-error{display:block;}
+  .booking-toast{
+    position:fixed;
+    left:50%;
+    bottom:28px;
+    z-index:3000;
+    max-width:min(420px, calc(100% - 32px));
+    padding:14px 18px;
+    border-radius:999px;
+    background:var(--green);
+    color:var(--cream);
+    font-weight:800;
+    box-shadow:0 16px 40px rgba(0,0,0,.38);
+    opacity:0;
+    visibility:hidden;
+    transform:translate3d(-50%,18px,0);
+    transition:opacity .25s ease, visibility .25s ease, transform .25s var(--ease-out);
+  }
+  .booking-toast.is-visible{
+    opacity:1;
+    visibility:visible;
+    transform:translate3d(-50%,0,0);
+  }
 
   /* ===== FOOTER ===== */
   footer{background:var(--black);color:var(--cream);padding:70px 8vw 30px;}
@@ -1481,7 +1522,7 @@
     <h3>Book an Appointment</h3>
     <p>Select your preferred branch and send us your booking request - we'll confirm your slot shortly.</p>
     <div class="booking-card" id="booking-form-card">
-      <form class="booking-form" id="bookingForm" onsubmit="return handleBookingSubmit(event);">
+      <form class="booking-form" id="bookingForm" novalidate onsubmit="return handleBookingSubmit(event);">
         <div class="branch-select-wrap">
           <label class="form-label" for="branchSelect">Choose Branch *</label>
           <select id="branchSelect" name="branch" required>
@@ -1876,7 +1917,7 @@
   let reviewTimer = null;
   let reviewCleanupTimer = null;
   let pendingReviewDirection = null;
-  const reviewMotionClasses = ['is-entering', 'is-exiting', 'from-left', 'from-right', 'to-left', 'to-right', 'no-transition'];
+  const reviewMotionClasses = ['is-entering', 'is-exiting', 'from-left', 'from-right', 'to-left', 'to-right', 'no-transition', 'is-wrap-incoming'];
 
   function resetReviewCard(card) {
     card.classList.remove(...reviewMotionClasses);
@@ -1896,6 +1937,7 @@
     const isPrev = direction === 'prev';
     const enterClass = isPrev ? 'from-left' : 'from-right';
     const exitClass = isPrev ? 'to-right' : 'to-left';
+    const isForwardWrap = !isPrev && reviewIndex === reviewCards.length - 1 && nextIndex === 0;
 
     if (prefersReducedMotion) {
       currentCard.classList.remove('is-active');
@@ -1913,6 +1955,7 @@
     });
 
     nextCard.classList.add('no-transition', 'is-entering', enterClass);
+    if (isForwardWrap) nextCard.classList.add('is-wrap-incoming');
     void nextCard.offsetWidth;
     nextCard.classList.remove('no-transition');
 
@@ -1963,60 +2006,149 @@
   const bookingSection = document.getElementById('booking-section');
   const bookingFormCard = document.getElementById('booking-form-card');
   const branchSelect = document.getElementById('branchSelect');
+  const bookingForm = document.getElementById('bookingForm');
+
+  function focusBookingForm(shouldScroll) {
+    if (!bookingSection) return;
+    if (shouldScroll) {
+      bookingSection.scrollIntoView({ behavior: prefersReducedMotion ? 'auto' : 'smooth', block: 'start' });
+    }
+    if (bookingFormCard) {
+      bookingFormCard.classList.add('is-highlighted');
+      setTimeout(() => bookingFormCard.classList.remove('is-highlighted'), 2400);
+    }
+    if (branchSelect) setTimeout(() => branchSelect.focus(), 400);
+  }
+
+  function showBookingToast(message) {
+    let toast = document.getElementById('bookingToast');
+    if (!toast) {
+      toast = document.createElement('div');
+      toast.id = 'bookingToast';
+      toast.className = 'booking-toast';
+      toast.setAttribute('role', 'status');
+      toast.setAttribute('aria-live', 'polite');
+      document.body.appendChild(toast);
+    }
+    toast.textContent = message;
+    toast.classList.add('is-visible');
+    clearTimeout(showBookingToast.timer);
+    showBookingToast.timer = setTimeout(() => toast.classList.remove('is-visible'), 3200);
+  }
 
   bookTriggers.forEach(btn => {
     btn.addEventListener('click', (e) => {
       e.preventDefault();
-      if (!bookingSection) return;
-      bookingSection.scrollIntoView({ behavior: prefersReducedMotion ? 'auto' : 'smooth', block: 'start' });
-      if (bookingFormCard) {
-        bookingFormCard.classList.add('is-highlighted');
-        setTimeout(() => bookingFormCard.classList.remove('is-highlighted'), 2400);
-      }
-      if (branchSelect) setTimeout(() => branchSelect.focus(), 400);
+      focusBookingForm(true);
     });
   });
+
+  if (window.location.hash === '#booking-section') {
+    setTimeout(() => focusBookingForm(false), 350);
+  }
+
+  if (bookingForm) {
+    bookingForm.querySelectorAll('input, select').forEach(field => {
+      field.addEventListener('input', () => {
+        field.setAttribute('aria-invalid', 'false');
+        field.parentElement.classList.remove('has-error');
+      });
+      field.addEventListener('change', () => {
+        field.setAttribute('aria-invalid', 'false');
+        field.parentElement.classList.remove('has-error');
+      });
+    });
+  }
 
   window.handleBookingSubmit = function (e) {
     e.preventDefault();
     const form = e.target;
-    const branch = form.branch.value;
-    const serviceCategory = form.serviceCategory.value;
+    const branch = form.branch.value.trim();
+    const serviceCategory = form.serviceCategory.value.trim();
     const name = form.name.value.trim();
     const phone = form.phone.value.trim();
-    const appointmentDate = form.date.value;
-    const appointmentTime = form.time.value;
-    if (!branch) {
-      alert('Please choose a branch - Kumbakonam or Karikulam.');
-      form.branch.focus();
+    const appointmentDate = form.date.value.trim();
+    const appointmentTime = form.time.value.trim();
+    const description = form.message.value.trim();
+    const email = form.email.value.trim();
+    const branchNumbers = {
+      Kumbakonam: '917380478047',
+      Karikulam: '916380453804'
+    };
+
+    function ensureErrorElement(field) {
+      const existing = field.parentElement.querySelector('.field-error[data-for="' + field.name + '"]');
+      if (existing) return existing;
+      const error = document.createElement('span');
+      error.className = 'field-error';
+      error.dataset.for = field.name;
+      field.insertAdjacentElement('afterend', error);
+      return error;
+    }
+
+    function setFieldError(field, message) {
+      const error = ensureErrorElement(field);
+      const container = field.parentElement;
+      error.textContent = message;
+      container.classList.toggle('has-error', Boolean(message));
+      field.setAttribute('aria-invalid', message ? 'true' : 'false');
+    }
+
+    [
+      form.name,
+      form.phone,
+      form.branch,
+      form.serviceCategory,
+      form.date,
+      form.time
+    ].forEach(field => setFieldError(field, ''));
+
+    const checks = [
+      { field: form.name, valid: Boolean(name), message: 'Please enter your name.' },
+      { field: form.phone, valid: Boolean(phone) && phone.replace(/\D/g, '').length >= 10, message: phone ? 'Please enter a valid mobile number.' : 'Please enter your mobile number.' },
+      { field: form.branch, valid: Boolean(branch), message: 'Please choose an outlet.' },
+      { field: form.serviceCategory, valid: Boolean(serviceCategory), message: 'Please choose a service category.' },
+      { field: form.date, valid: Boolean(appointmentDate), message: 'Please choose your preferred date.' },
+      { field: form.time, valid: Boolean(appointmentTime), message: 'Please choose your preferred time.' }
+    ];
+
+    checks.forEach(check => {
+      if (!check.valid) setFieldError(check.field, check.message);
+    });
+
+    const firstInvalid = checks.find(check => !check.valid);
+    if (firstInvalid) {
+      firstInvalid.field.focus();
       return false;
     }
-    if (!serviceCategory) {
-      alert('Please choose a service category.');
-      form.serviceCategory.focus();
-      return false;
-    }
-    if (!name) {
-      alert('Please enter your name to register.');
-      form.name.focus();
-      return false;
-    }
-    if (!phone || phone.replace(/\D/g, '').length < 10) {
-      alert('Please enter a valid mobile number to register.');
-      form.phone.focus();
-      return false;
-    }
-    if (!appointmentDate) {
-      alert('Please choose your preferred appointment date.');
-      form.date.focus();
-      return false;
-    }
-    if (!appointmentTime) {
-      alert('Please choose your preferred appointment time.');
-      form.time.focus();
-      return false;
-    }
-    alert('Thank you! Your ' + serviceCategory + ' appointment request for FreshFace ' + branch + ' on ' + appointmentDate + ' at ' + appointmentTime + ' has been received. We will call you shortly to confirm.');
+
+    const bookedAt = new Intl.DateTimeFormat('en-IN', {
+      dateStyle: 'medium',
+      timeStyle: 'short'
+    }).format(new Date());
+    const messageLines = [
+      '🗓️ *New Appointment Booking*',
+      '──────────────────────────',
+      '👤 *Name:* ' + name,
+      '📞 *Mobile:* ' + phone,
+      '🏪 *Outlet:* ' + branch,
+      '✂️ *Service:* ' + serviceCategory,
+      '📅 *Date:* ' + appointmentDate,
+      '🕐 *Time:* ' + appointmentTime,
+      '──────────────────────────'
+    ];
+
+    if (description) messageLines.push('📋 *Description:* ' + description);
+    if (email) messageLines.push('📧 *Email:* ' + email);
+
+    messageLines.push(
+      '──────────────────────────',
+      '⏱️ Booked at: ' + bookedAt
+    );
+
+    const whatsappUrl = 'https://wa.me/' + branchNumbers[branch] + '?text=' + encodeURIComponent(messageLines.join('\n'));
+    showBookingToast('Opening WhatsApp to confirm your booking...');
+    window.open(whatsappUrl, '_blank', 'noopener');
     form.reset();
     return false;
   };
