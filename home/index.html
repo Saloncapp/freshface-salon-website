@@ -7,11 +7,12 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300..700&family=Manrope:wght@400;500;600;700;800&family=Nunito:wght@700;800&display=swap" rel="stylesheet">
-<link rel="preload" as="image" href="/interior 2.webp">
-<link rel="preload" as="image" href="/interior 3.png">
-<link rel="preload" as="image" href="/interior 4.jpeg">
-<link rel="preload" as="image" href="/interior 5.jpeg">
-<link rel="preload" as="image" href="/interior 6.jpeg">
+<link rel="preload" as="image" href="/interiors/interior.webp">
+<link rel="preload" as="image" href="/interiors/interior 2.webp">
+<link rel="preload" as="image" href="/interiors/interior 3.png">
+<link rel="preload" as="image" href="/interiors/interior 4.jpeg">
+<link rel="preload" as="image" href="/interiors/interior 5.jpeg">
+<link rel="preload" as="image" href="/interiors/interior 6.jpeg">
 <style>
   :root{
     --green:#8DC455;
@@ -562,20 +563,31 @@
     display:flex;align-items:center;justify-content:center;
     color:var(--green);font-family:var(--display);font-size:2.5rem;font-weight:700;
     position:relative;
-    filter:grayscale(100%);
+    overflow:hidden;
+    border:2px solid rgba(141,196,85,.7);
     transition:filter .45s var(--ease-out);
+  }
+  .team-photo img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    object-position:center top;
+    transform:scale(1);
+    transition:transform .38s var(--ease-out);
+    will-change:transform;
   }
   .team-photo::after{
     content:'';
     position:absolute;inset:0;
     background:rgba(141,196,85,.28);
+    opacity:0;
     transition:opacity .45s var(--ease-out);
     pointer-events:none;
   }
-  .team-card:hover .team-photo{
-    filter:grayscale(0%);
-  }
   .team-card:hover .team-photo::after{opacity:0;}
+  .team-card:hover .team-photo img{
+    transform:scale(1.08);
+  }
   .team-card h4{margin-top:18px;font-family:var(--body);font-size:1.05rem;}
   .team-card span{color:var(--green);font-size:.85rem;font-weight:700;}
 
@@ -1054,7 +1066,7 @@
 <!-- ===== HERO ===== -->
 <section class="hero" id="home">
   <div class="hero-text">
-    <img src="/freshface-logo.png" alt="FreshFace Unisex Salon" class="hero-brand-logo hero-load" data-delay="0" width="450" height="181">
+    <img src="/FF%20logo/freshface-logo.png" alt="FreshFace Unisex Salon" class="hero-brand-logo hero-load" data-delay="0" width="450" height="181">
     <div class="eyebrow hero-load" data-delay="120">Unisex Salon &amp; Spa</div>
     <h1 class="hero-load" data-delay="240">Look Fresh.<br>Feel <span class="accent">Confident.</span></h1>
     <p class="hero-load" data-delay="380">FreshFace Unisex Salon brings together expert stylists, premium products, and a calm, modern space - for hair, skin, nails, and grooming, designed for everyone.</p>
@@ -1080,7 +1092,7 @@
   <div class="hero-visual-wrap" id="heroParallax">
     <div class="hero-visual">
       <div class="hero-slide-frame" id="heroSlideFrame">
-        <img id="heroFeatureImg" src="/interior.webp" alt="FreshFace Unisex Salon interior image 1" class="hero-feature-img" width="1200" height="1200" loading="eager" decoding="async">
+        <img id="heroFeatureImg" src="/interiors/interior.webp" alt="FreshFace Unisex Salon interior image 1" class="hero-feature-img" width="1200" height="1200" loading="eager" decoding="async">
 
         <div class="badge">
           <strong><span class="counter" id="googleRating" data-target="4.9" data-decimals="1">0</span><span class="rating-star">&#9733;</span></strong>
@@ -1393,19 +1405,19 @@
   </div>
   <div class="team-grid reveal-stagger">
     <div class="team-card reveal-child">
-      <div class="team-photo">A</div>
-      <h4>Aarav Mehta</h4>
+      <div class="team-photo"><img src="/stylist-images/bazid.png" alt="Bazid, FreshFace stylist" loading="lazy" decoding="async"></div>
+      <h4>Bazid</h4>
       <span>Senior Hair Stylist</span>
     </div>
     <div class="team-card reveal-child">
-      <div class="team-photo">P</div>
-      <h4>Priya Nair</h4>
-      <span>Color Specialist</span>
+      <div class="team-photo"><img src="/stylist-images/yamin.png" alt="Yamin, FreshFace stylist" loading="lazy" decoding="async"></div>
+      <h4>Yamin</h4>
+      <span>Stylist</span>
     </div>
     <div class="team-card reveal-child">
-      <div class="team-photo">R</div>
-      <h4>Rohan Das</h4>
-      <span>Grooming Expert</span>
+      <div class="team-photo"><img src="/stylist-images/sameer.png" alt="Sameer, FreshFace stylist" loading="lazy" decoding="async"></div>
+      <h4>Sameer</h4>
+      <span>Stylist</span>
     </div>
     <div class="team-card reveal-child">
       <div class="team-photo">S</div>
@@ -1579,7 +1591,7 @@
           </div>
           <div>
             <label class="form-label" for="bookPhone">Mobile Number *</label>
-            <input type="tel" id="bookPhone" name="phone" placeholder="Phone Number" required pattern="[0-9+\s\-()]{10,15}" title="Enter a valid mobile number">
+            <input type="tel" id="bookPhone" name="phone" placeholder="Phone Number" required inputmode="numeric" autocomplete="tel" maxlength="10" pattern="[0-9]{10}" title="Enter a 10 digit mobile number">
           </div>
         </div>
         <input type="email" name="email" placeholder="Email Address (optional)">
@@ -2088,6 +2100,9 @@
   if (bookingForm) {
     bookingForm.querySelectorAll('input, select').forEach(field => {
       field.addEventListener('input', () => {
+        if (field.name === 'phone') {
+          field.value = field.value.replace(/\D/g, '').slice(0, 10);
+        }
         field.setAttribute('aria-invalid', 'false');
         field.parentElement.classList.remove('has-error');
       });
@@ -2104,7 +2119,8 @@
     const branch = form.branch.value.trim();
     const serviceCategory = form.serviceCategory.value.trim();
     const name = form.name.value.trim();
-    const phone = form.phone.value.trim();
+    const phone = form.phone.value.replace(/\D/g, '').slice(0, 10);
+    form.phone.value = phone;
     const appointmentDate = form.date.value.trim();
     const appointmentTime = form.time.value.trim();
     const description = form.message.value.trim();
@@ -2143,7 +2159,7 @@
 
     const checks = [
       { field: form.name, valid: Boolean(name), message: 'Please enter your name.' },
-      { field: form.phone, valid: Boolean(phone) && phone.replace(/\D/g, '').length >= 10, message: phone ? 'Please enter a valid mobile number.' : 'Please enter your mobile number.' },
+      { field: form.phone, valid: /^[0-9]{10}$/.test(phone), message: phone ? 'Please enter a valid 10 digit mobile number.' : 'Please enter your mobile number.' },
       { field: form.branch, valid: Boolean(branch), message: 'Please choose an outlet.' },
       { field: form.serviceCategory, valid: Boolean(serviceCategory), message: 'Please choose a service category.' },
       { field: form.date, valid: Boolean(appointmentDate), message: 'Please choose your preferred date.' },
@@ -2203,12 +2219,12 @@
     if (!visual || !currentFrame || !img || !prevBtn || !nextBtn) return;
 
     const slides = [
-      { src: '/interior.webp', alt: 'FreshFace Unisex Salon interior image 1' },
-      { src: '/interior 2.webp', alt: 'FreshFace Unisex Salon interior image 2' },
-      { src: '/interior 3.png', alt: 'FreshFace Unisex Salon interior image 3' },
-      { src: '/interior 4.jpeg', alt: 'FreshFace Unisex Salon interior image 4' },
-      { src: '/interior 5.jpeg', alt: 'FreshFace Unisex Salon interior image 5' },
-      { src: '/interior 6.jpeg', alt: 'FreshFace Unisex Salon interior image 6' }
+      { src: '/interiors/interior.webp', alt: 'FreshFace Unisex Salon interior image 1' },
+      { src: '/interiors/interior 2.webp', alt: 'FreshFace Unisex Salon interior image 2' },
+      { src: '/interiors/interior 3.png', alt: 'FreshFace Unisex Salon interior image 3' },
+      { src: '/interiors/interior 4.jpeg', alt: 'FreshFace Unisex Salon interior image 4' },
+      { src: '/interiors/interior 5.jpeg', alt: 'FreshFace Unisex Salon interior image 5' },
+      { src: '/interiors/interior 6.jpeg', alt: 'FreshFace Unisex Salon interior image 6' }
     ];
 
     // Preload for snappy switching

@@ -94,7 +94,10 @@
     }
 
     .nav-links .btn,
-    .nav-links .btn-book {
+    .nav-links .btn-book,
+    .ff-common-header .nav-links .btn,
+    .ff-common-header .nav-links .btn-book,
+    body > nav .btn-book {
       display: inline-flex !important;
       align-items: center !important;
       justify-content: center !important;
@@ -110,8 +113,12 @@
 
     .nav-links a:not(.btn):not(.btn-book),
     .nav-links a:not(.btn):not(.btn-book).active,
-    .nav-links a:not(.btn):not(.btn-book).is-active {
+    .nav-links a:not(.btn):not(.btn-book).is-active,
+    .ff-common-header .nav-links a:not(.btn):not(.btn-book),
+    body > nav .nav-links a:not(.btn):not(.btn-book) {
       color: var(--cream) !important;
+      font-size: .95rem !important;
+      font-weight: 600 !important;
       position: relative;
       padding: 6px 0;
     }
@@ -162,7 +169,56 @@
     }
 
     .ff-common-logo {
+      display: inline-flex;
+      flex-direction: column;
+      align-items: flex-start;
       font-size: 1.65rem !important;
+    }
+
+    .ff-common-logo .nav-smile {
+      width: 100%;
+      max-width: 118px;
+      height: 14px;
+      margin-top: 3px;
+      opacity: 0;
+      pointer-events: none;
+      overflow: visible;
+    }
+
+    .ff-common-logo .nav-smile path {
+      fill: none;
+      stroke: var(--green);
+      stroke-width: 3.5;
+      stroke-linecap: round;
+      stroke-dasharray: 100;
+      stroke-dashoffset: 100;
+    }
+
+    .ff-common-logo.show-smile .nav-smile {
+      opacity: 1;
+      animation: navSmileFadeOut 1.35s var(--ease-out) forwards;
+    }
+
+    .ff-common-logo.show-smile .nav-smile path {
+      animation: navSmileDraw 1.35s var(--ease-out) forwards;
+    }
+
+    @keyframes navSmileDraw {
+      0% { stroke-dashoffset: 100; opacity: 1; }
+      58% { stroke-dashoffset: 0; opacity: 1; }
+      100% { stroke-dashoffset: 0; opacity: 0; }
+    }
+
+    @keyframes navSmileFadeOut {
+      0%, 58% { opacity: 1; }
+      100% { opacity: 0; }
+    }
+
+    body > nav .logo {
+      font-family: var(--display) !important;
+      font-size: 1.65rem !important;
+      font-weight: 700 !important;
+      line-height: 1 !important;
     }
 
     .ff-common-footer-logo {
@@ -428,7 +484,12 @@
     return `
       <header class="ff-common-header">
         <nav>
-          <a href="/home/index.html" class="ff-common-logo"><span class="fresh">Fresh</span><span class="face">Face</span></a>
+          <a href="/home/index.html" class="ff-common-logo" aria-label="FreshFace home">
+            <span><span class="fresh">Fresh</span><span class="face">Face</span></span>
+            <svg class="nav-smile" viewBox="0 0 120 20" aria-hidden="true">
+              <path d="M 8 8 Q 60 20 112 8" pathLength="100"/>
+            </svg>
+          </a>
           <div class="nav-links">
             <a href="/home/index.html">Home</a>
             <a href="/services/index.html">Services</a>
@@ -541,6 +602,48 @@
     });
   }
 
+  function initCommonLogoSmile() {
+    document.querySelectorAll('.ff-common-logo').forEach(logo => {
+      if (logo.dataset.ffSmileReady === 'true') return;
+      logo.dataset.ffSmileReady = 'true';
+      let smilePlaying = false;
+      let smileCooldown = false;
+
+      function playSmile() {
+        if (smilePlaying || smileCooldown) return;
+        smilePlaying = true;
+        logo.classList.remove('show-smile');
+        void logo.offsetWidth;
+        logo.classList.add('show-smile');
+        setTimeout(() => {
+          logo.classList.remove('show-smile');
+          smilePlaying = false;
+          smileCooldown = true;
+          setTimeout(() => { smileCooldown = false; }, 280);
+        }, 1400);
+      }
+
+      logo.addEventListener('mouseenter', playSmile);
+      logo.addEventListener('focus', playSmile);
+      logo.addEventListener('touchstart', playSmile, { passive: true });
+    });
+  }
+
+  function initPhoneFields(scope) {
+    const target = scope || document;
+    scopedElements(target, 'input[type="tel"]').forEach(input => {
+      input.inputMode = 'numeric';
+      input.maxLength = 10;
+      input.pattern = '[0-9]{10}';
+      input.title = 'Enter a 10 digit mobile number';
+      if (input.dataset.ffPhoneReady === 'true') return;
+      input.dataset.ffPhoneReady = 'true';
+      input.addEventListener('input', () => {
+        input.value = input.value.replace(/\D/g, '').slice(0, 10);
+      });
+    });
+  }
+
   function toArray(list) {
     return Array.prototype.slice.call(list);
   }
@@ -619,11 +722,15 @@
     document.addEventListener('DOMContentLoaded', () => {
       applyCommonShell();
       initCommonNav();
+      initCommonLogoSmile();
+      initPhoneFields(document);
       initFreshFaceAnimations(document);
     }, { once: true });
   } else {
     applyCommonShell();
     initCommonNav();
+    initCommonLogoSmile();
+    initPhoneFields(document);
     initFreshFaceAnimations(document);
   }
 })();

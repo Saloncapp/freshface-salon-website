@@ -19,7 +19,12 @@ export default defineConfig({
         othersServices: resolve(__dirname, 'services/others/index.html')
       },
       output: {
-        assetFileNames: '[name][extname]'
+        assetFileNames: assetInfo => {
+          const originalName = assetInfo.originalFileNames?.[0] || assetInfo.names?.[0] || assetInfo.name || '';
+          if (originalName.startsWith('interiors/')) return 'interiors/[name][extname]';
+          if (originalName.startsWith('FF logo/')) return 'FF logo/[name][extname]';
+          return '[name][extname]';
+        }
       }
     }
   }
