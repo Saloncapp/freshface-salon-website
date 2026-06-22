@@ -95,8 +95,50 @@ function renderBackButton() {
   document.body.insertBefore(button, document.body.firstChild);
 }
 
+function renderServiceFooterStyle() {
+  if (document.getElementById('service-footer-fix')) return;
+  const style = document.createElement('style');
+  style.id = 'service-footer-fix';
+  style.textContent = `
+    .ff-common-footer {
+      padding-left: 0 !important;
+      padding-right: 0 !important;
+    }
+
+    .ff-common-footer-grid {
+      padding-left: 8vw !important;
+      padding-right: 8vw !important;
+    }
+
+    .ff-common-footer-bottom {
+      width: 100% !important;
+      padding: 24px 8vw 0 !important;
+      align-items: flex-end !important;
+    }
+
+    .ff-common-footer-bottom span:last-child {
+      margin-left: auto !important;
+      text-align: right !important;
+    }
+
+    @media (max-width: 860px) {
+      .ff-common-footer-grid {
+        padding-left: 6vw !important;
+        padding-right: 6vw !important;
+      }
+
+      .ff-common-footer-bottom {
+        padding-left: 6vw !important;
+        padding-right: 6vw !important;
+      }
+    }
+  `;
+  document.head.appendChild(style);
+}
+
 if (page) {
   renderBackButton();
+  renderServiceFooterStyle();
   document.title = `FreshFace - ${page.title} Services`;
   document.getElementById('categoryName').textContent = page.title;
   document.getElementById('heroTitle').innerHTML = `${escapeHtml(page.title)} <em>Services</em>`;

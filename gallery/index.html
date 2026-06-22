@@ -27,6 +27,7 @@
       color: var(--white);
       font-family: var(--font);
       -webkit-font-smoothing: antialiased;
+      -webkit-tap-highlight-color: transparent;
     }
 
     nav {
@@ -175,6 +176,10 @@
       display: block;
       border: 1px solid rgba(168,230,61,0.08);
       background: #141414;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: manipulation;
     }
 
     .masonry-item img {
@@ -187,6 +192,9 @@
       transition: none;
       image-rendering: auto;
       backface-visibility: hidden;
+      user-select: none;
+      -webkit-user-select: none;
+      -webkit-touch-callout: none;
     }
 
     .image-stage {
@@ -251,11 +259,21 @@
       font-size: 1rem;
       transition: background 0.2s, color 0.2s;
       backdrop-filter: blur(6px);
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: manipulation;
     }
 
     .item-nav button:hover {
       background: rgba(168,230,61,0.22);
       color: var(--green-lite);
+    }
+
+    .item-nav button:focus:not(:focus-visible),
+    .lb-nav:focus:not(:focus-visible),
+    .lb-close:focus:not(:focus-visible) {
+      outline: none;
     }
 
     .img-placeholder {
@@ -379,6 +397,9 @@
       display: block;
       margin: 0 auto;
       image-rendering: auto;
+      user-select: none;
+      -webkit-user-select: none;
+      -webkit-touch-callout: none;
     }
 
     .lightbox-info {
@@ -421,6 +442,10 @@
       align-items: center;
       justify-content: center;
       transition: background 0.2s;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: manipulation;
     }
 
     .lb-close:hover { background: rgba(255,255,255,0.15); }
@@ -441,6 +466,10 @@
       align-items: center;
       justify-content: center;
       transition: background 0.2s;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: manipulation;
     }
 
     .lb-nav:hover {
@@ -922,6 +951,12 @@
       img.addEventListener('load', () => setNaturalImageBounds(img), { once: true });
     }
 
+    function clearControlFocus(event) {
+      const button = event?.target?.closest?.('button');
+      if (!button) return;
+      window.setTimeout(() => button.blur(), 500);
+    }
+
     function updateGridPairItem(itemId) {
       const item = getItemById(itemId);
       const card = document.querySelector(`.masonry-item[data-item-id="${itemId}"]`);
@@ -986,7 +1021,10 @@
     }
 
     function cyclePair(itemId, dir, e) {
-      if (e) e.stopPropagation();
+      if (e) {
+        e.stopPropagation();
+        clearControlFocus(e);
+      }
       const item = getItemById(itemId);
       if (!item || !item.images || item.images.length < 2) return;
       const current = pairState[itemId] || 0;
@@ -1032,7 +1070,10 @@
     }
 
     function navLightbox(dir, e) {
-      if (e) e.stopPropagation();
+      if (e) {
+        e.stopPropagation();
+        clearControlFocus(e);
+      }
       const item = visibleItems[currentIndex];
       const images = item.images || [{ src: item.src, label: '' }];
       if (images.length < 2) return;
