@@ -600,7 +600,24 @@
         padding-left: 20px;
         padding-right: 20px;
       }
-      .masonry-item { flex-basis: calc((100% - 12px) / 2); }
+      .masonry {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr);
+        gap: 18px;
+      }
+      .masonry-item {
+        width: 100%;
+        min-height: 360px;
+        flex: none;
+        opacity: 1 !important;
+        transform: none !important;
+      }
+      .gallery-wrap.reveal,
+      .masonry.reveal-stagger,
+      .masonry.reveal-stagger .reveal-child {
+        opacity: 1 !important;
+        transform: none !important;
+      }
       .cta-strip {
         flex-direction: column;
         align-items: flex-start;
@@ -622,7 +639,7 @@
       <li><a href="/services/index.html">Services</a></li>
       <li><a href="/about-us/index.html">About Us</a></li>
       <li><a href="/gallery/index.html" class="active">Gallery</a></li>
-      <li><a href="/contact-us/index.html">Contact</a></li>
+      <li><a href="/contact-us/index.html">Contact Us</a></li>
     </ul>
     <a href="/home/index.html#booking-section" class="btn-book">Book Now</a>
   </nav>
@@ -684,7 +701,7 @@
           <li><a href="/services/index.html">Services</a></li>
           <li><a href="/about-us/index.html">About Us</a></li>
           <li><a href="/gallery/index.html">Gallery</a></li>
-          <li><a href="/contact-us/index.html">Contact</a></li>
+          <li><a href="/contact-us/index.html">Contact Us</a></li>
         </ul>
       </div>
       <div class="footer-col">
@@ -702,11 +719,12 @@
         <div class="footer-outlet">
           <strong>Kumbakonam - TSR Big Street</strong>
           <span>+91 73804 78047</span>
+          <span>freshface.townbranch@gmail.com</span>
         </div>
         <div class="footer-outlet">
           <strong>Karikulam - Near Axis Bank</strong>
           <span>+91 63804 53804</span>
-          <span>freshfacekumbakonam@gmail.com</span>
+          <span>freshfacekarikulam@gmail.com</span>
         </div>
       </div>
     </div>
@@ -954,6 +972,8 @@
       if (window.FreshFaceAnimations) {
         window.FreshFaceAnimations.refresh(grid);
       }
+      document.querySelector('.gallery-wrap')?.classList.add('is-visible');
+      grid.classList.add('is-visible');
       grid.querySelectorAll('.image-stage img').forEach(guardImageQuality);
     }
 

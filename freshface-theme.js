@@ -497,7 +497,7 @@
             <a href="/services/index.html">Services</a>
             <a href="/about-us/index.html">About Us</a>
             <a href="/gallery/index.html">Gallery</a>
-            <a href="/contact-us/index.html">Contact</a>
+            <a href="/contact-us/index.html">Contact Us</a>
             <a href="/home/index.html#booking-section" class="btn-book">Book Now</a>
           </div>
           <button class="nav-toggle" type="button" aria-label="Toggle menu" aria-expanded="false">&#9776;</button>
@@ -532,7 +532,7 @@
               <li><a href="/services/index.html">Services</a></li>
               <li><a href="/about-us/index.html">About Us</a></li>
               <li><a href="/gallery/index.html">Gallery</a></li>
-              <li><a href="/contact-us/index.html">Contact</a></li>
+              <li><a href="/contact-us/index.html">Contact Us</a></li>
             </ul>
           </div>
           <div>
@@ -548,11 +548,12 @@
           <div>
             <h4>Our Outlets</h4>
             <ul>
-              <li><strong style="color:var(--cream);">Kumbakonam</strong> - TSR Big Street</li>
+              <li><strong style="color:var(--cream);">Kumbakonam</strong> - Next to Gandhi Park, opposite to Rotary Coronation Hospital, Valayapettai Agraharam, Kumbakonam, Tamil Nadu 612001</li>
               <li><a href="tel:+917380478047">+91 73804 78047</a></li>
-              <li><strong style="color:var(--cream);">Karikulam</strong> - Near Axis Bank</li>
+              <li><a href="mailto:freshface.townbranch@gmail.com">freshface.townbranch@gmail.com</a></li>
+              <li><strong style="color:var(--cream);">Karikulam</strong> - Upstairs to Medplus Pharmacy, Plot No 1, Kumbakonam - Sirkazhi Hwy, next to Axis Bank Karikulam Branch, Gandhi Nagar, Umamaheswarapuram, Kumbakonam, Tamil Nadu 612103</li>
               <li><a href="tel:+916380453804">+91 63804 53804</a></li>
-              <li><a href="mailto:freshfacekumbakonam@gmail.com">freshfacekumbakonam@gmail.com</a></li>
+              <li><a href="mailto:freshfacekarikulam@gmail.com">freshfacekarikulam@gmail.com</a></li>
             </ul>
           </div>
         </div>

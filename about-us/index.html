@@ -295,6 +295,22 @@
       margin-bottom: 4px;
     }
 
+    .location-address {
+      min-height: 88px;
+      margin-bottom: 16px;
+    }
+
+    .location-contact-row {
+      display: grid;
+      gap: 8px;
+      margin-top: 0;
+    }
+
+    .location-contact-row p {
+      margin-bottom: 0;
+      white-space: nowrap;
+    }
+
     /* CTA */
     .cta-block {
       padding: 80px 60px;
@@ -547,6 +563,7 @@
       .hero, .section, .belief, .cta-block { padding-left: 20px; padding-right: 20px; }
       .divider { margin: 0 20px; }
       .two-col, .pillars, .locations { grid-template-columns: 1fr; }
+      .location-address { min-height: 0; }
       .footer-grid { grid-template-columns: 1fr 1fr; }
       footer { padding: 40px 20px 24px; }
     }
@@ -563,7 +580,7 @@
       <li><a href="/services/index.html">Services</a></li>
       <li><a href="/about-us/index.html" class="active">About Us</a></li>
       <li><a href="/gallery/index.html">Gallery</a></li>
-      <li><a href="/contact-us/index.html">Contact</a></li>
+      <li><a href="/contact-us/index.html">Contact Us</a></li>
     </ul>
     <!-- CTA -->
     <a href="/home/index.html#booking-section" class="btn-book">Book Now</a>
@@ -672,16 +689,22 @@
       <div class="location-card">
         <span class="loc-tag">Kumbakonam</span>
         <!-- EDITABLE: Location name, address, phone -->
-        <h3>TSR Big Street</h3>
-        <p>+91 73804 78047</p>
-        <p>freshfacekumbakonam@gmail.com</p>
+        <h3>Kumbakonam</h3>
+        <p class="location-address">Next to Gandhi Park, opposite to Rotary Coronation Hospital, Valayapettai Agraharam, Kumbakonam, Tamil Nadu 612001</p>
+        <div class="location-contact-row">
+          <p>+91 73804 78047</p>
+          <p>freshface.townbranch@gmail.com</p>
+        </div>
       </div>
       <div class="location-card">
         <span class="loc-tag">Karikulam</span>
         <!-- EDITABLE: Location name, address, phone -->
-        <h3>Near Axis Bank</h3>
-        <p>+91 63804 53804</p>
-        <p>freshfacekumbakonam@gmail.com</p>
+        <h3>Karikulam</h3>
+        <p class="location-address">Upstairs to Medplus Pharmacy, Plot No 1, Kumbakonam - Sirkazhi Hwy, next to Axis Bank Karikulam Branch, Gandhi Nagar, Umamaheswarapuram, Kumbakonam, Tamil Nadu 612103</p>
+        <div class="location-contact-row">
+          <p>+91 63804 53804</p>
+          <p>freshfacekarikulam@gmail.com</p>
+        </div>
       </div>
     </div>
   </section>
@@ -720,7 +743,7 @@
           <li><a href="/services/index.html">Services</a></li>
           <li><a href="/about-us/index.html" class="active">About Us</a></li>
           <li><a href="/gallery/index.html">Gallery</a></li>
-          <li><a href="/contact-us/index.html">Contact</a></li>
+          <li><a href="/contact-us/index.html">Contact Us</a></li>
         </ul>
       </div>
 
@@ -740,13 +763,16 @@
         <h4>Our Outlets</h4>
         <div class="footer-outlet">
           <!-- EDITABLE: Outlet details -->
-          <strong>Kumbakonam - TSR Big Street</strong>
+          <strong>Kumbakonam</strong>
+          <span>Next to Gandhi Park, opposite to Rotary Coronation Hospital, Valayapettai Agraharam, Kumbakonam, Tamil Nadu 612001</span>
           <span>+91 73804 78047</span>
+          <span>freshface.townbranch@gmail.com</span>
         </div>
         <div class="footer-outlet">
-          <strong>Karikulam - Near Axis Bank</strong>
+          <strong>Karikulam</strong>
+          <span>Upstairs to Medplus Pharmacy, Plot No 1, Kumbakonam - Sirkazhi Hwy, next to Axis Bank Karikulam Branch, Gandhi Nagar, Umamaheswarapuram, Kumbakonam, Tamil Nadu 612103</span>
           <span>+91 63804 53804</span>
-          <span>freshfacekumbakonam@gmail.com</span>
+          <span>freshfacekarikulam@gmail.com</span>
         </div>
       </div>
     </div>
