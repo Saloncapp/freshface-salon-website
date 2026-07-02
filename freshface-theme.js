@@ -150,68 +150,101 @@
     }
 
     .ff-common-header nav {
-      min-height: 97px;
+      min-height: 96px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 18px 8vw;
+      padding: 12px 8vw;
       position: relative;
     }
 
     .ff-common-logo,
-    .ff-common-footer-logo {
-      color: var(--cream);
-      font-family: var(--display, 'Fraunces', serif) !important;
-      font-weight: 700;
-      line-height: 1;
-      text-decoration: none;
-      letter-spacing: -.01em;
-    }
-
-    .ff-common-logo {
+    .ff-common-footer-logo-wrap {
       display: inline-flex;
       flex-direction: column;
       align-items: flex-start;
-      font-size: 1.65rem !important;
+      text-decoration: none;
+      line-height: 1;
     }
 
-    .ff-common-logo .nav-smile {
+    .ff-logo-anim {
+      position: relative;
+      display: inline-block;
+      line-height: 0;
+    }
+
+    .ff-logo-anim img {
+      display: block;
+      height: 68px;
+      width: auto;
+    }
+
+    .ff-logo-anim svg {
+      position: absolute;
+      top: 0;
+      left: 0;
       width: 100%;
-      max-width: 118px;
-      height: 14px;
-      margin-top: 3px;
-      opacity: 0;
+      height: 100%;
       pointer-events: none;
-      overflow: visible;
     }
 
-    .ff-common-logo .nav-smile path {
+    .footer-logo-wrap .ff-logo-anim img,
+    .ff-common-footer-logo-wrap .ff-logo-anim img {
+      height: 88px;
+    }
+
+    header.is-scrolled .ff-logo-anim img,
+    .ff-common-header.is-scrolled .ff-logo-anim img {
+      height: 56px;
+      transition: height .35s var(--ease-out);
+    }
+
+    .ff-logo-anim img {
+      transition: height .35s var(--ease-out);
+    }
+
+    .logo-brand {
+      position: relative;
+      display: inline-block;
+      line-height: 0;
+    }
+
+    .logo-smile-path {
       fill: none;
-      stroke: var(--green);
-      stroke-width: 3.5;
+      stroke: #93C145;
+      stroke-width: 40;
       stroke-linecap: round;
-      stroke-dasharray: 100;
-      stroke-dashoffset: 100;
+      pathLength: 1;
+      stroke-dasharray: 1;
+      stroke-dashoffset: 1;
     }
 
-    .ff-common-logo.show-smile .nav-smile {
-      opacity: 1;
-      animation: navSmileFadeOut 1.35s var(--ease-out) forwards;
+    .logo-brand.is-smile-animating .logo-smile-path {
+      animation: drawSmile 2.6s ease-in-out forwards;
     }
 
-    .ff-common-logo.show-smile .nav-smile path {
-      animation: navSmileDraw 1.35s var(--ease-out) forwards;
+    @keyframes drawSmile {
+      0% { stroke-dashoffset: 1; }
+      45% { stroke-dashoffset: 0; }
+      80% { stroke-dashoffset: 0; }
+      100% { stroke-dashoffset: 0; }
     }
 
-    @keyframes navSmileDraw {
-      0% { stroke-dashoffset: 100; opacity: 1; }
-      58% { stroke-dashoffset: 0; opacity: 1; }
-      100% { stroke-dashoffset: 0; opacity: 0; }
+    @media (prefers-reduced-motion: reduce) {
+      .logo-smile-path {
+        animation: none !important;
+        stroke-dashoffset: 0 !important;
+      }
     }
 
-    @keyframes navSmileFadeOut {
-      0%, 58% { opacity: 1; }
-      100% { opacity: 0; }
+    .social-follow-label {
+      color: var(--green);
+      font-size: .78rem;
+      font-weight: 700;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      margin-top: 18px;
+      margin-bottom: 10px;
     }
 
     body > nav .logo,
@@ -223,25 +256,8 @@
       line-height: 1 !important;
     }
 
-    .ff-common-footer-logo {
-      display: inline-flex;
-      align-items: baseline;
-      font-size: 1.8rem !important;
+    .ff-common-footer-logo-wrap {
       margin-bottom: 14px;
-    }
-
-    .ff-common-logo .fresh,
-    .ff-common-footer-logo .fresh {
-      color: var(--green);
-      font: inherit !important;
-      font-size: inherit !important;
-    }
-
-    .ff-common-logo .face,
-    .ff-common-footer-logo .face {
-      color: var(--cream);
-      font: inherit !important;
-      font-size: inherit !important;
     }
 
     .ff-common-footer {
@@ -330,7 +346,7 @@
         align-items: center;
         flex-direction: row;
         gap: 16px;
-        padding: 18px 6vw;
+        padding: 14px 6vw;
       }
 
       .ff-common-header .nav-toggle {
@@ -482,15 +498,27 @@
     return window.location.pathname.replace(/\\/g, '/').endsWith('/home/index.html');
   }
 
+  const LOGO_SMILE_PATH = 'M 631.0 1136.0 C 647.7 1147.6, 696.0 1181.7, 731.0 1205.5 C 766.0 1229.3, 804.3 1257.4, 841.0 1279.0 C 877.7 1300.6, 914.3 1318.8, 951.0 1335.0 C 987.7 1351.2, 1024.3 1364.4, 1061.0 1376.0 C 1097.7 1387.6, 1134.3 1397.0, 1171.0 1404.5 C 1207.7 1412.0, 1244.3 1417.4, 1281.0 1421.0 C 1317.7 1424.6, 1356.0 1426.0, 1391.0 1426.0 C 1426.0 1426.0, 1456.0 1424.6, 1491.0 1421.0 C 1526.0 1417.4, 1564.3 1412.0, 1601.0 1404.5 C 1637.7 1397.0, 1674.3 1387.6, 1711.0 1376.0 C 1747.7 1364.4, 1784.3 1351.1, 1821.0 1335.0 C 1857.7 1318.9, 1894.3 1300.8, 1931.0 1279.5 C 1967.7 1258.2, 2004.3 1232.8, 2041.0 1207.5 C 2077.7 1182.2, 2132.7 1140.8, 2151.0 1127.5';
+
+  function logoAnimMarkup(imgClass) {
+    return `
+      <span class="ff-logo-anim">
+        <img class="${imgClass} ff-logo-img" src="/FF%20logo/freshface-logo-animated.png" alt="FreshFace Unisex Salon" width="2400" height="1605">
+        <svg viewBox="0 0 2400 1605" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+          <path class="logo-smile-path" d="${LOGO_SMILE_PATH}" pathLength="1" stroke-dasharray="1" stroke-dashoffset="1"/>
+        </svg>
+      </span>
+    `;
+  }
+
   function commonHeader() {
     return `
       <header class="ff-common-header">
         <nav>
           <a href="/home/index.html" class="ff-common-logo" aria-label="FreshFace home">
-            <span><span class="fresh">Fresh</span><span class="face">Face</span></span>
-            <svg class="nav-smile" viewBox="0 0 120 20" aria-hidden="true">
-              <path d="M 8 8 Q 60 20 112 8" pathLength="100"/>
-            </svg>
+            <span class="logo-brand">
+              ${logoAnimMarkup('nav-brand-logo')}
+            </span>
           </a>
           <div class="nav-links">
             <a href="/home/index.html">Home</a>
@@ -511,8 +539,13 @@
       <footer class="ff-common-footer">
         <div class="ff-common-footer-grid">
           <div>
-            <div class="ff-common-footer-logo"><span class="fresh">Fresh</span><span class="face">Face</span></div>
+            <a href="/home/index.html" class="ff-common-footer-logo-wrap ff-common-footer-logo" aria-label="FreshFace home">
+              <span class="logo-brand">
+                ${logoAnimMarkup('footer-brand-logo')}
+              </span>
+            </a>
             <p>FreshFace Unisex Salon - where everyone gets the care, style, and confidence they deserve.</p>
+            <p class="social-follow-label">Follow Us</p>
             <div class="ff-common-social">
               <a href="https://www.instagram.com/freshface_kumbakonam?igsh=enl0ajhyMTdsOWU1&utm_source=qr" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
                 <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
@@ -551,7 +584,7 @@
               <li><strong style="color:var(--cream);">Kumbakonam</strong> - Next to Gandhi Park, opposite to Rotary Coronation Hospital, Valayapettai Agraharam, Kumbakonam, Tamil Nadu 612001</li>
               <li><a href="tel:+917380478047">+91 73804 78047</a></li>
               <li><a href="mailto:freshface.townbranch@gmail.com">freshface.townbranch@gmail.com</a></li>
-              <li><strong style="color:var(--cream);">Karikulam</strong> - Upstairs to Medplus Pharmacy, Plot No 1, Kumbakonam - Sirkazhi Hwy, next to Axis Bank Karikulam Branch, Gandhi Nagar, Umamaheswarapuram, Kumbakonam, Tamil Nadu 612103</li>
+              <li><strong style="color:var(--cream);">Karikulam</strong> - Upstairs to Medplus Pharmacy, Gandhi Nagar, Umamaheswarapuram, Kumbakonam, Tamil Nadu 612103</li>
               <li><a href="tel:+916380453804">+91 63804 53804</a></li>
               <li><a href="mailto:freshfacekarikulam@gmail.com">freshfacekarikulam@gmail.com</a></li>
             </ul>
@@ -602,33 +635,6 @@
           toggle.setAttribute('aria-expanded', 'false');
         });
       });
-    });
-  }
-
-  function initCommonLogoSmile() {
-    document.querySelectorAll('.ff-common-logo').forEach(logo => {
-      if (logo.dataset.ffSmileReady === 'true') return;
-      logo.dataset.ffSmileReady = 'true';
-      let smilePlaying = false;
-      let smileCooldown = false;
-
-      function playSmile() {
-        if (smilePlaying || smileCooldown) return;
-        smilePlaying = true;
-        logo.classList.remove('show-smile');
-        void logo.offsetWidth;
-        logo.classList.add('show-smile');
-        setTimeout(() => {
-          logo.classList.remove('show-smile');
-          smilePlaying = false;
-          smileCooldown = true;
-          setTimeout(() => { smileCooldown = false; }, 280);
-        }, 1400);
-      }
-
-      logo.addEventListener('mouseenter', playSmile);
-      logo.addEventListener('focus', playSmile);
-      logo.addEventListener('touchstart', playSmile, { passive: true });
     });
   }
 
@@ -721,19 +727,61 @@
     reveal: revealElement
   };
 
+  function initLogoSmileAnimation(scope) {
+    if (prefersReducedMotion) return;
+
+    const target = scope || document;
+    const logoLinks = scopedElements(target, '.logo-wrap, .footer-logo-wrap, .ff-common-logo, .ff-common-footer-logo-wrap');
+
+    logoLinks.forEach(link => {
+      if (link.dataset.ffSmileReady === 'true') return;
+      link.dataset.ffSmileReady = 'true';
+
+      const logoBrand = link.querySelector('.logo-brand');
+      const smilePath = logoBrand && logoBrand.querySelector('.logo-smile-path');
+      if (!logoBrand || !smilePath) return;
+
+      link.addEventListener('mouseenter', () => {
+        if (logoBrand.classList.contains('is-smile-animating')) return;
+        logoBrand.classList.add('is-smile-animating');
+      });
+
+      smilePath.addEventListener('animationend', (event) => {
+        if (event.animationName !== 'drawSmile') return;
+        logoBrand.classList.remove('is-smile-animating');
+        smilePath.style.strokeDashoffset = '1';
+      });
+    });
+  }
+
+  function ensureFavicon() {
+    if (document.querySelector('link[rel="icon"]')) return;
+    const icon = document.createElement('link');
+    icon.rel = 'icon';
+    icon.type = 'image/png';
+    icon.href = '/FF%20logo/freshface-favicon.png';
+    document.head.appendChild(icon);
+    const apple = document.createElement('link');
+    apple.rel = 'apple-touch-icon';
+    apple.href = '/FF%20logo/freshface-favicon.png';
+    document.head.appendChild(apple);
+  }
+
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', () => {
+      ensureFavicon();
       applyCommonShell();
       initCommonNav();
-      initCommonLogoSmile();
       initPhoneFields(document);
       initFreshFaceAnimations(document);
+      initLogoSmileAnimation(document);
     }, { once: true });
   } else {
+    ensureFavicon();
     applyCommonShell();
     initCommonNav();
-    initCommonLogoSmile();
     initPhoneFields(document);
     initFreshFaceAnimations(document);
+    initLogoSmileAnimation(document);
   }
 })();

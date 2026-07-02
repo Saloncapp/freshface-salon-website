@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>FreshFace Unisex Salon</title>
+<link rel="icon" type="image/png" href="/FF%20logo/freshface-favicon.png">
+<link rel="apple-touch-icon" href="/FF%20logo/freshface-favicon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300..700&family=Manrope:wght@400;500;600;700;800&family=Nunito:wght@700;800&display=swap" rel="stylesheet">
@@ -11,6 +13,88 @@
 <link rel="preload" as="image" href="/interiors/interior 2.webp">
 <link rel="preload" as="image" href="/interiors/interior 3.png">
 <link rel="preload" as="image" href="/interiors/interior 4.jpeg">
+<script type="module">
+  const today = new Date();
+  const pad = (value) => String(value).padStart(2, '0');
+  const todayISO = today.getFullYear() + '-' + pad(today.getMonth() + 1) + '-' + pad(today.getDate());
+
+  function sameLocalDay(dateA, dateB) {
+    return (
+      dateA.getFullYear() === dateB.getFullYear() &&
+      dateA.getMonth() === dateB.getMonth() &&
+      dateA.getDate() === dateB.getDate()
+    );
+  }
+
+  function parseLocalDateTime(dateValue, timeValue) {
+    if (!dateValue || !timeValue) return null;
+    const [y, m, d] = dateValue.split('-').map(Number);
+    const [hh, mm] = timeValue.split(':').map(Number);
+    if (!y || !m || !d || Number.isNaN(hh) || Number.isNaN(mm)) return null;
+    return new Date(y, m - 1, d, hh, mm, 0, 0);
+  }
+
+  function initBookingMinDates() {
+    const dateInput = document.getElementById('appointmentDate');
+    const timeInput = document.getElementById('appointmentTime');
+    if (dateInput) dateInput.min = todayISO;
+    if (!dateInput || !timeInput) return;
+
+    function updateTimeMin() {
+      const selected = dateInput.value;
+      if (!selected) {
+        timeInput.min = '';
+        return;
+      }
+      const selectedDate = new Date(selected + 'T00:00:00');
+      if (sameLocalDay(selectedDate, new Date())) {
+        const now = new Date();
+        timeInput.min = pad(now.getHours()) + ':' + pad(now.getMinutes());
+      } else {
+        timeInput.min = '';
+      }
+    }
+
+    dateInput.addEventListener('change', updateTimeMin);
+    updateTimeMin();
+  }
+
+  function initBookingValidation() {
+    const form = document.getElementById('bookingForm');
+    if (!form) return;
+    const dateInput = form.querySelector('input[type=\"date\"][name=\"date\"]');
+    const timeInput = form.querySelector('input[type=\"time\"][name=\"time\"]');
+    if (!dateInput || !timeInput) return;
+
+    function clearCustom() {
+      dateInput.setCustomValidity('');
+      timeInput.setCustomValidity('');
+    }
+
+    dateInput.addEventListener('input', clearCustom);
+    timeInput.addEventListener('input', clearCustom);
+
+    form.addEventListener('submit', () => {
+      clearCustom();
+      const selected = parseLocalDateTime(dateInput.value, timeInput.value);
+      if (!selected) return;
+      if (selected.getTime() < Date.now()) {
+        timeInput.setCustomValidity('Please choose a future time.');
+        timeInput.reportValidity();
+      }
+    }, true);
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+      initBookingMinDates();
+      initBookingValidation();
+    }, { once: true });
+  } else {
+    initBookingMinDates();
+    initBookingValidation();
+  }
+</script>
 <link rel="preload" as="image" href="/interiors/interior 5.jpeg">
 <link rel="preload" as="image" href="/interiors/interior 6.jpeg">
 <style>
@@ -103,50 +187,46 @@
   }
   nav{
     display:flex;align-items:center;justify-content:space-between;
-    padding:18px 8vw;
+    padding:12px 8vw;
     transition:padding .35s var(--ease-out);
   }
-  header.is-scrolled nav{padding:10px 8vw;}
+  header.is-scrolled nav{padding:8px 8vw;}
   .logo-wrap{
     display:inline-flex;flex-direction:column;align-items:flex-start;
     cursor:pointer;text-decoration:none;
   }
-  .logo{
-    font-family:var(--display);
-    font-size:1.65rem;
-    font-weight:700;
-    letter-spacing:-.01em;
-    transition:font-size .35s var(--ease-out);
-    line-height:1;
+  .ff-logo-anim{
+    position:relative;display:inline-block;line-height:0;
   }
-  header.is-scrolled .logo{font-size:1.38rem;}
-  .logo span.fresh{color:var(--green);}
-  .logo span.face{color:var(--cream);}
-  .nav-smile{
-    width:100%;max-width:118px;height:14px;margin-top:3px;
-    opacity:0;pointer-events:none;overflow:visible;
+  .ff-logo-anim img{
+    display:block;height:68px;width:auto;
+    transition:height .35s var(--ease-out);
   }
-  .nav-smile path{
-    fill:none;stroke:var(--green);stroke-width:3.5;
-    stroke-linecap:round;
-    stroke-dasharray:100;
-    stroke-dashoffset:100;
+  .ff-logo-anim svg{
+    position:absolute;top:0;left:0;width:100%;height:100%;
+    pointer-events:none;
   }
-  .logo-wrap.show-smile .nav-smile{
-    opacity:1;
-    animation:navSmileFadeOut 1.35s var(--ease-out) forwards;
+  .footer-logo-wrap .ff-logo-anim img{height:88px;}
+  header.is-scrolled .ff-logo-anim img{height:56px;}
+  .logo-brand{
+    position:relative;display:inline-block;line-height:0;
   }
-  .logo-wrap.show-smile .nav-smile path{
-    animation:navSmileDraw 1.35s var(--ease-out) forwards;
+  .logo-smile-path{
+    fill:none;stroke:#93C145;stroke-width:40;stroke-linecap:round;
+    pathLength:1;stroke-dasharray:1;stroke-dashoffset:1;
   }
-  @keyframes navSmileDraw{
-    0%{stroke-dashoffset:100;opacity:1;}
-    58%{stroke-dashoffset:0;opacity:1;}
-    100%{stroke-dashoffset:0;opacity:0;}
+  .logo-brand.is-smile-animating .logo-smile-path{
+    animation:drawSmile 2.6s ease-in-out forwards;
   }
-  @keyframes navSmileFadeOut{
-    0%,58%{opacity:1;}
-    100%{opacity:0;}
+  @keyframes drawSmile{
+    0%{stroke-dashoffset:1;}
+    45%{stroke-dashoffset:0;}
+    80%{stroke-dashoffset:0;}
+    100%{stroke-dashoffset:0;}
+  }
+  .footer-logo-wrap{
+    display:inline-flex;flex-direction:column;align-items:flex-start;
+    margin-bottom:14px;text-decoration:none;
   }
   .nav-links .btn.btn-primary{
     padding:16px 36px;font-size:1rem;letter-spacing:.02em;
@@ -558,7 +638,7 @@
   .team-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:24px;}
   .team-card{background:var(--charcoal);border-radius:18px;overflow:hidden;text-align:center;padding-bottom:24px;border:1px solid var(--line);display:flex;flex-direction:column;}
   .team-photo{
-    aspect-ratio:1/1;background:linear-gradient(160deg,var(--black),var(--charcoal));
+    aspect-ratio:1/1;background:#1e3a24;
     display:flex;align-items:center;justify-content:center;
     color:var(--green);font-family:var(--display);font-size:2.5rem;font-weight:700;
     position:relative;
@@ -568,8 +648,8 @@
     width:100%;
     height:100%;
     object-fit:cover;
-    object-position:center top;
-    background:linear-gradient(160deg,var(--black),var(--charcoal));
+    object-position:center center;
+    background:#1e3a24;
     transform:scale(1);
     transition:transform .32s var(--ease-out);
     will-change:transform;
@@ -596,17 +676,19 @@
   .gallery-head h2 .accent{color:var(--green);font-style:italic;}
   .gallery-head p{color:var(--gray);margin-top:10px;max-width:480px;}
   .gallery-grid{
-    display:grid;grid-template-columns:repeat(4,1fr);grid-template-rows:repeat(2,260px);gap:18px;
+    display:grid;grid-template-columns:repeat(4,1fr);gap:18px;
   }
   .gallery-item{
     border-radius:16px;overflow:hidden;
     position:relative;
     cursor:pointer;
     background:var(--black);
+    aspect-ratio:3 / 4;
+    min-height:0;
   }
   .gallery-item-inner{
     position:absolute;inset:0;
-    background:linear-gradient(135deg,var(--green),var(--green-dark));
+    background:var(--black);
     transform:translate3d(0,0,0) scale(1);
     transition:transform .45s var(--ease-out);
     will-change:transform;
@@ -614,12 +696,10 @@
   .gallery-item-inner img{
     width:100%;
     height:100%;
-    object-fit:contain;
+    object-fit:cover;
     object-position:center;
+    display:block;
   }
-  .gallery-item:nth-child(2n) .gallery-item-inner{background:linear-gradient(135deg,var(--charcoal),var(--black));}
-  .gallery-item:nth-child(1){grid-column:span 2;grid-row:span 2;}
-  .gallery-item:nth-child(4){grid-row:span 2;}
   .gallery-item:hover .gallery-item-inner{transform:scale(1.05);}
   .gallery-item span{
     position:absolute;bottom:14px;left:18px;font-size:.85rem;letter-spacing:.05em;
@@ -816,22 +896,6 @@
     position:relative;
   }
   .map-box iframe{width:100%;height:100%;border:0;display:block;}
-  .map-overlay-link{
-    position:absolute;
-    top:8px;
-    left:8px;
-    z-index:3;
-    display:inline-flex;
-    align-items:center;
-    gap:4px;
-    padding:7px 10px;
-    border-radius:3px;
-    background:#fff;
-    color:#1a73e8;
-    font-size:.82rem;
-    font-weight:700;
-    box-shadow:0 1px 4px rgba(0,0,0,.24);
-  }
   .map-link{
     display:inline-flex;align-items:center;gap:6px;
     margin-top:10px;font-size:.85rem;font-weight:700;color:var(--green);
@@ -889,18 +953,24 @@
     font-family:var(--body);font-size:.95rem;
     transition:border-color .2s;
   }
-  input::placeholder,textarea::placeholder{color:var(--gray);}
   input:focus,textarea:focus{outline:none;border-color:var(--green);}
   input[type="date"],
   input[type="time"]{
-    background:#fff;
-    color:var(--black);
-    color-scheme:light;
+    background:#0D0D0D;
+    color:var(--cream);
+    color-scheme:dark;
+  }
+  input[type="date"]::-webkit-calendar-picker-indicator,
+  input[type="time"]::-webkit-calendar-picker-indicator{
+    filter:brightness(0) invert(1);
+    opacity:1;
+    cursor:pointer;
   }
   input[type="date"]:focus,
   input[type="time"]:focus{
     border-color:var(--green);
   }
+  input::placeholder,textarea::placeholder{color:rgba(245,245,240,.72);}
   textarea{resize:vertical;min-height:120px;}
   .field-error{
     display:none;
@@ -944,9 +1014,10 @@
   .footer-grid{
     display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:50px;margin-bottom:50px;
   }
-  .footer-logo{font-family:var(--display);font-size:1.8rem;font-weight:700;margin-bottom:14px;}
-  .footer-logo span.fresh{color:var(--green);}
-  .footer-logo span.face{color:var(--cream);}
+  .social-follow-label{
+    color:var(--green);font-size:.78rem;font-weight:700;
+    letter-spacing:.12em;text-transform:uppercase;margin-top:18px;margin-bottom:10px;
+  }
   .footer-grid p{color:var(--gray);font-size:.92rem;max-width:280px;}
   .footer-grid h4{font-size:.85rem;letter-spacing:.12em;text-transform:uppercase;color:var(--green);margin-bottom:18px;}
   .footer-grid ul{list-style:none;display:flex;flex-direction:column;gap:10px;}
@@ -994,9 +1065,7 @@
     .about{grid-template-columns:1fr;}
     .why-grid{grid-template-columns:1fr;}
     .team-grid{grid-template-columns:repeat(2,1fr);}
-    .gallery-grid{grid-template-columns:repeat(2,1fr);grid-template-rows:repeat(3,240px);}
-    .gallery-item:nth-child(1){grid-column:span 2;grid-row:span 1;}
-    .gallery-item:nth-child(4){grid-row:span 1;}
+    .gallery-grid{grid-template-columns:repeat(2,1fr);}
     .review-carousel{gap:10px;}
     .carousel-btn{width:40px;height:40px;font-size:1.1rem;}
     .review-stage{height:min(380px, 62vh);min-height:320px;}
@@ -1036,8 +1105,8 @@
     .nav-toggle{display:block;}
     .grid-4{grid-template-columns:1fr;}
     .team-grid{grid-template-columns:1fr;}
-    .gallery-grid{grid-template-columns:1fr;grid-template-rows:repeat(6,300px);}
-    .gallery-item:nth-child(1){grid-column:span 1;}
+    .gallery-grid{grid-template-columns:1fr;}
+    .gallery-item{aspect-ratio:3 / 4;}
     .form-row{flex-direction:column;}
     .footer-grid{grid-template-columns:1fr;}
     .service-table-head,
@@ -1072,6 +1141,7 @@
     .gallery-item:hover .gallery-item-inner{transform:none !important;}
     .team-photo{filter:none !important;}
     .team-photo::after{opacity:0 !important;}
+    .logo-smile-path{animation:none !important;stroke-dashoffset:1 !important;}
   }
   :focus-visible{outline:2px solid var(--green);outline-offset:2px;}
 </style>
@@ -1082,10 +1152,14 @@
 <header id="siteHeader">
   <nav>
     <a href="/home/index.html" class="logo-wrap" id="navLogo" aria-label="FreshFace home">
-      <div class="logo"><span class="fresh">Fresh</span><span class="face">Face</span></div>
-      <svg class="nav-smile" viewBox="0 0 120 20" aria-hidden="true">
-        <path d="M 8 8 Q 60 20 112 8" pathLength="100"/>
-      </svg>
+      <span class="logo-brand">
+        <span class="ff-logo-anim">
+          <img class="nav-brand-logo ff-logo-img" src="/FF%20logo/freshface-logo-animated.png" alt="FreshFace Unisex Salon" width="2400" height="1605">
+          <svg viewBox="0 0 2400 1605" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+            <path class="logo-smile-path" d="M 631.0 1136.0 C 647.7 1147.6, 696.0 1181.7, 731.0 1205.5 C 766.0 1229.3, 804.3 1257.4, 841.0 1279.0 C 877.7 1300.6, 914.3 1318.8, 951.0 1335.0 C 987.7 1351.2, 1024.3 1364.4, 1061.0 1376.0 C 1097.7 1387.6, 1134.3 1397.0, 1171.0 1404.5 C 1207.7 1412.0, 1244.3 1417.4, 1281.0 1421.0 C 1317.7 1424.6, 1356.0 1426.0, 1391.0 1426.0 C 1426.0 1426.0, 1456.0 1424.6, 1491.0 1421.0 C 1526.0 1417.4, 1564.3 1412.0, 1601.0 1404.5 C 1637.7 1397.0, 1674.3 1387.6, 1711.0 1376.0 C 1747.7 1364.4, 1784.3 1351.1, 1821.0 1335.0 C 1857.7 1318.9, 1894.3 1300.8, 1931.0 1279.5 C 1967.7 1258.2, 2004.3 1232.8, 2041.0 1207.5 C 2077.7 1182.2, 2132.7 1140.8, 2151.0 1127.5" pathLength="1" stroke-dasharray="1" stroke-dashoffset="1"/>
+          </svg>
+        </span>
+      </span>
     </a>
     <div class="nav-links" id="navLinks">
       <a href="/home/index.html" data-section="home">Home</a>
@@ -1441,22 +1515,22 @@
   </div>
   <div class="team-grid reveal-stagger">
     <div class="team-card reveal-child">
-      <div class="team-photo"><img src="/stylist-images/Gemini_Generated_Image_ww2naiww2naiww2n.png" alt="Sabari, FreshFace senior stylist" loading="lazy" decoding="async"></div>
+      <div class="team-photo"><img src="/stylist-images/sabari.png" alt="Sabari, FreshFace senior stylist" loading="lazy" decoding="async"></div>
       <h4>Sabari</h4>
       <span>Senior Stylist</span>
     </div>
     <div class="team-card reveal-child">
-      <div class="team-photo"><img src="/stylist-images/bazid.png" alt="Bazid, FreshFace senior hair stylist" loading="lazy" decoding="async"></div>
+      <div class="team-photo"><img src="/stylist-images/bazid%20.png" alt="Bazid, FreshFace senior hair stylist" loading="lazy" decoding="async"></div>
       <h4>Bazid</h4>
       <span>Senior Hair Stylist</span>
     </div>
     <div class="team-card reveal-child">
-      <div class="team-photo"><img src="/stylist-images/yamin.png?v=20260620-2" alt="Yamin, FreshFace stylist" loading="lazy" decoding="async"></div>
+      <div class="team-photo"><img src="/stylist-images/yamin%20.png" alt="Yamin, FreshFace stylist" loading="lazy" decoding="async"></div>
       <h4>Yamin</h4>
       <span>Stylist</span>
     </div>
     <div class="team-card reveal-child">
-      <div class="team-photo"><img src="/stylist-images/sameer.png?v=20260620-2" alt="Sameer, FreshFace stylist" loading="lazy" decoding="async"></div>
+      <div class="team-photo"><img src="/stylist-images/sameer.png" alt="Sameer, FreshFace stylist" loading="lazy" decoding="async"></div>
       <h4>Sameer</h4>
       <span>Stylist</span>
     </div>
@@ -1482,8 +1556,9 @@
     <div class="gallery-item reveal-child"><div class="gallery-item-inner"><img src="/gallery/after 2.jpeg" alt="Layered haircut finish" loading="lazy" decoding="async"></div><span>Layer Cut</span></div>
     <div class="gallery-item reveal-child"><div class="gallery-item-inner"><img src="/gallery/WhatsApp Image 2026-06-20 at 2.46.44 PM (2).jpeg" alt="Traditional bridal look" loading="lazy" decoding="async"></div><span>Bridal Look</span></div>
     <div class="gallery-item reveal-child"><div class="gallery-item-inner"><img src="/gallery/after.jpeg" alt="Hair cut and beard design" loading="lazy" decoding="async"></div><span>Hair Cut &amp; Beard Design</span></div>
-    <div class="gallery-item reveal-child"><div class="gallery-item-inner"><img src="/gallery/home-makeup-look.png" alt="FreshFace makeup look" loading="lazy" decoding="async"></div><span>Makeup</span></div>
-    <div class="gallery-item reveal-child"><div class="gallery-item-inner"><img src="/gallery/after 9.jpeg" alt="Layer cut with color finish" loading="lazy" decoding="async"></div><span>Layer Cut With Color</span></div>
+    <div class="gallery-item reveal-child"><div class="gallery-item-inner"><img src="/gallery/mehendi.jpeg" alt="Bridal mehendi design" loading="lazy" decoding="async"></div><span>Bridal Mehendi</span></div>
+    <div class="gallery-item reveal-child"><div class="gallery-item-inner"><img src="/gallery/kids cut.jpeg" alt="Kids textured haircut" loading="lazy" decoding="async"></div><span>Kids Haircut</span></div>
+    <div class="gallery-item reveal-child"><div class="gallery-item-inner"><img src="/gallery/WhatsApp Image 2026-07-01 at 4.57.39 PM.jpeg" alt="FreshFace salon styling" loading="lazy" decoding="async"></div><span>Salon Style</span></div>
   </div>
 </section>
 
@@ -1548,7 +1623,6 @@
       <h4 class="outlet-branch-label">Kumbakonam</h4>
       <div class="map-wrap">
         <div class="map-box">
-          <a class="map-overlay-link" href="https://maps.app.goo.gl/8uLWPd3qbzicV3xW9" target="_blank" rel="noopener noreferrer">Open in Maps</a>
           <iframe
             title="FreshFace Kumbakonam Town Branch on Google Maps"
             src="https://maps.google.com/maps?q=next%20to%20Gandhi%20Park%2C%20opposite%20to%20Rotary%20Coronation%20Hospital%2C%20Valayapettai%20Agraharam%2C%20Kumbakonam%2C%20Tamil%20Nadu%20612001&amp;hl=en&amp;z=17&amp;output=embed"
@@ -1579,7 +1653,7 @@
         <div class="map-box">
           <iframe
             title="FreshFace Karikulam Branch on Google Maps"
-            src="https://maps.google.com/maps?q=Upstairs%20to%20Medplus%20Pharmacy%2C%20Plot%20No%201%2C%20Kumbakonam%20-%20Sirkazhi%20Hwy%2C%20next%20to%20Axis%20Bank%20Karikulam%20Branch%2C%20Gandhi%20Nagar%2C%20Umamaheswarapuram%2C%20Kumbakonam%2C%20Tamil%20Nadu%20612103&amp;hl=en&amp;z=17&amp;output=embed"
+            src="https://maps.google.com/maps?q=Upstairs%20to%20Medplus%20Pharmacy%2C%20Gandhi%20Nagar%2C%20Umamaheswarapuram%2C%20Kumbakonam%2C%20Tamil%20Nadu%20612103&amp;hl=en&amp;z=17&amp;output=embed"
             allowfullscreen=""
             loading="lazy"
             referrerpolicy="no-referrer-when-downgrade">
@@ -1588,7 +1662,7 @@
       </div>
       <p class="outlet-detail">
         <strong>Address</strong>
-        Upstairs to Medplus Pharmacy, Plot No 1, Kumbakonam - Sirkazhi Hwy, next to Axis Bank Karikulam Branch, Gandhi Nagar, Umamaheswarapuram, Kumbakonam, Tamil Nadu 612103
+        Upstairs to Medplus Pharmacy, Gandhi Nagar, Umamaheswarapuram, Kumbakonam, Tamil Nadu 612103
       </p>
       <p class="outlet-detail">
         <strong>Phone</strong>
@@ -1616,16 +1690,8 @@
           </select>
         </div>
         <div>
-          <label class="form-label" for="serviceCategory">Service Category *</label>
-          <select id="serviceCategory" name="serviceCategory" required>
-            <option value="" disabled selected>Select service category</option>
-            <option value="Hair">Hair</option>
-            <option value="Skin & Facial">Skin &amp; Facial</option>
-            <option value="Nails">Nails</option>
-            <option value="Grooming">Grooming</option>
-            <option value="Makeup">Makeup</option>
-            <option value="Bridal">Bridal</option>
-          </select>
+          <label class="form-label" for="bookService">Service *</label>
+          <select id="bookService" name="service" required data-service-select></select>
         </div>
         <div class="form-row">
           <div>
@@ -1659,8 +1725,18 @@
 <footer>
   <div class="footer-grid">
     <div>
-      <div class="footer-logo"><span class="fresh">Fresh</span><span class="face">Face</span></div>
+      <a href="/home/index.html" class="footer-logo-wrap" id="footerLogo" aria-label="FreshFace home">
+        <span class="logo-brand">
+          <span class="ff-logo-anim">
+            <img class="footer-brand-logo ff-logo-img" src="/FF%20logo/freshface-logo-animated.png" alt="FreshFace Unisex Salon" width="2400" height="1605">
+            <svg viewBox="0 0 2400 1605" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+              <path class="logo-smile-path" d="M 631.0 1136.0 C 647.7 1147.6, 696.0 1181.7, 731.0 1205.5 C 766.0 1229.3, 804.3 1257.4, 841.0 1279.0 C 877.7 1300.6, 914.3 1318.8, 951.0 1335.0 C 987.7 1351.2, 1024.3 1364.4, 1061.0 1376.0 C 1097.7 1387.6, 1134.3 1397.0, 1171.0 1404.5 C 1207.7 1412.0, 1244.3 1417.4, 1281.0 1421.0 C 1317.7 1424.6, 1356.0 1426.0, 1391.0 1426.0 C 1426.0 1426.0, 1456.0 1424.6, 1491.0 1421.0 C 1526.0 1417.4, 1564.3 1412.0, 1601.0 1404.5 C 1637.7 1397.0, 1674.3 1387.6, 1711.0 1376.0 C 1747.7 1364.4, 1784.3 1351.1, 1821.0 1335.0 C 1857.7 1318.9, 1894.3 1300.8, 1931.0 1279.5 C 1967.7 1258.2, 2004.3 1232.8, 2041.0 1207.5 C 2077.7 1182.2, 2132.7 1140.8, 2151.0 1127.5" pathLength="1" stroke-dasharray="1" stroke-dashoffset="1"/>
+            </svg>
+          </span>
+        </span>
+      </a>
       <p>FreshFace Unisex Salon - where everyone gets the care, style, and confidence they deserve.</p>
+      <p class="social-follow-label">Follow Us</p>
       <div class="social-row">
         <a href="https://www.instagram.com/freshface_kumbakonam?igsh=enl0ajhyMTdsOWU1&utm_source=qr" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
@@ -1699,7 +1775,7 @@
         <li><strong style="color:var(--cream);">Kumbakonam</strong> - Next to Gandhi Park, opposite to Rotary Coronation Hospital, Valayapettai Agraharam, Kumbakonam, Tamil Nadu 612001</li>
         <li><a href="tel:+917380478047">+91 73804 78047</a></li>
         <li><a href="mailto:freshface.townbranch@gmail.com">freshface.townbranch@gmail.com</a></li>
-        <li><strong style="color:var(--cream);">Karikulam</strong> - Upstairs to Medplus Pharmacy, Plot No 1, Kumbakonam - Sirkazhi Hwy, next to Axis Bank Karikulam Branch, Gandhi Nagar, Umamaheswarapuram, Kumbakonam, Tamil Nadu 612103</li>
+        <li><strong style="color:var(--cream);">Karikulam</strong> - Upstairs to Medplus Pharmacy, Gandhi Nagar, Umamaheswarapuram, Kumbakonam, Tamil Nadu 612103</li>
         <li><a href="tel:+916380453804">+91 63804 53804</a></li>
         <li><a href="mailto:freshfacekarikulam@gmail.com">freshfacekarikulam@gmail.com</a></li>
       </ul>
@@ -1716,6 +1792,12 @@
 </button>
 
 <script type="module" src="/freshface-theme.js"></script>
+<script type="module">
+  import { buildWhatsAppMessage, openWhatsAppBooking } from '/booking-whatsapp.js';
+  import { initBookingServiceSelects } from '/booking-services.js';
+  window.FreshFaceBooking = { buildWhatsAppMessage, openWhatsAppBooking };
+  initBookingServiceSelects(document);
+</script>
 <script>
 (function () {
   'use strict';
@@ -1955,39 +2037,8 @@
     animateCursor();
   }
 
-  // Nav logo smile - draw left to right on hover / mouse drag, no scroll jump on click
   const navLogo = document.getElementById('navLogo');
-  let smilePlaying = false;
-  let smileCooldown = false;
-
-  function playNavSmile() {
-    if (smilePlaying || smileCooldown || !navLogo) return;
-    smilePlaying = true;
-    navLogo.classList.remove('show-smile');
-    void navLogo.offsetWidth;
-    navLogo.classList.add('show-smile');
-    setTimeout(() => {
-      navLogo.classList.remove('show-smile');
-      smilePlaying = false;
-      smileCooldown = true;
-      setTimeout(() => { smileCooldown = false; }, 280);
-    }, 1350);
-  }
-
   if (navLogo) {
-    let dragX = null;
-    navLogo.addEventListener('mouseenter', (e) => {
-      dragX = e.clientX;
-      playNavSmile();
-    });
-    navLogo.addEventListener('mousemove', (e) => {
-      if (dragX === null) return;
-      if (Math.abs(e.clientX - dragX) > 32) {
-        dragX = e.clientX;
-        playNavSmile();
-      }
-    });
-    navLogo.addEventListener('mouseleave', () => { dragX = null; });
     navLogo.addEventListener('click', (e) => {
       if (window.scrollY < 140) {
         e.preventDefault();
@@ -2177,7 +2228,7 @@
     e.preventDefault();
     const form = e.target;
     const branch = form.branch.value.trim();
-    const serviceCategory = form.serviceCategory.value.trim();
+    const service = form.service.value.trim();
     const name = form.name.value.trim();
     const phone = form.phone.value.replace(/\D/g, '').slice(0, 10);
     form.phone.value = phone;
@@ -2185,10 +2236,6 @@
     const appointmentTime = form.time.value.trim();
     const description = form.message.value.trim();
     const email = form.email.value.trim();
-    const branchNumbers = {
-      Kumbakonam: '917380478047',
-      Karikulam: '916380453804'
-    };
 
     function ensureErrorElement(field) {
       const existing = field.parentElement.querySelector('.field-error[data-for="' + field.name + '"]');
@@ -2212,18 +2259,30 @@
       form.name,
       form.phone,
       form.branch,
-      form.serviceCategory,
+      form.service,
       form.date,
       form.time
     ].forEach(field => setFieldError(field, ''));
+
+    const selectedDateTime = (function () {
+      if (!appointmentDate || !appointmentTime) return null;
+      const parts = appointmentDate.split('-').map(Number);
+      const timeParts = appointmentTime.split(':').map(Number);
+      if (parts.length !== 3 || timeParts.length < 2) return null;
+      const [yy, mm, dd] = parts;
+      const [hh, min] = timeParts;
+      if (!yy || !mm || !dd || Number.isNaN(hh) || Number.isNaN(min)) return null;
+      return new Date(yy, mm - 1, dd, hh, min, 0, 0);
+    })();
 
     const checks = [
       { field: form.name, valid: Boolean(name), message: 'Please enter your name.' },
       { field: form.phone, valid: /^[0-9]{10}$/.test(phone), message: phone ? 'Please enter a valid 10 digit mobile number.' : 'Please enter your mobile number.' },
       { field: form.branch, valid: Boolean(branch), message: 'Please choose an outlet.' },
-      { field: form.serviceCategory, valid: Boolean(serviceCategory), message: 'Please choose a service category.' },
+      { field: form.service, valid: Boolean(service), message: 'Please choose a service.' },
       { field: form.date, valid: Boolean(appointmentDate), message: 'Please choose your preferred date.' },
-      { field: form.time, valid: Boolean(appointmentTime), message: 'Please choose your preferred time.' }
+      { field: form.time, valid: Boolean(appointmentTime), message: 'Please choose your preferred time.' },
+      { field: form.time, valid: !selectedDateTime || selectedDateTime.getTime() >= Date.now(), message: 'Please choose a future time.' }
     ];
 
     checks.forEach(check => {
@@ -2240,29 +2299,23 @@
       dateStyle: 'medium',
       timeStyle: 'short'
     }).format(new Date());
-    const messageLines = [
-      '*New Appointment Booking*',
-      '--------------------------',
-      '*Name:* ' + name,
-      '*Mobile:* ' + phone,
-      '*Outlet:* ' + branch,
-      '*Service:* ' + serviceCategory,
-      '*Date:* ' + appointmentDate,
-      '*Time:* ' + appointmentTime,
-      '--------------------------'
-    ];
+    const message = window.FreshFaceBooking
+      ? window.FreshFaceBooking.buildWhatsAppMessage({
+          name,
+          phone,
+          branch: branch,
+          service: service,
+          date: appointmentDate,
+          time: appointmentTime,
+          description,
+          email
+        })
+      : '';
 
-    if (description) messageLines.push('*Description:* ' + description);
-    if (email) messageLines.push('*Email:* ' + email);
-
-    messageLines.push(
-      '--------------------------',
-      'Booked at: ' + bookedAt
-    );
-
-    const whatsappUrl = 'https://wa.me/' + branchNumbers[branch] + '?text=' + encodeURIComponent(messageLines.join('\n'));
+    if (!message || !window.FreshFaceBooking?.openWhatsAppBooking(branch, message)) {
+      return false;
+    }
     showBookingToast('Opening WhatsApp to confirm your booking...');
-    window.open(whatsappUrl, '_blank', 'noopener');
     form.reset();
     return false;
   };

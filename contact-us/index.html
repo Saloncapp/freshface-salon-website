@@ -230,6 +230,7 @@
       margin-bottom: 10px;
     }
     .outlet-card .contact-line strong { color: var(--white); font-weight: 600; }
+    .outlet-card .contact-line strong + span { margin-left: 0.55em; }
 
     .outlet-card .icon {
       width: 30px; height: 30px;
@@ -366,7 +367,7 @@
     .field select,
     .field textarea {
       width: 100%;
-      background: var(--bg-input);
+      background: #0D0D0D;
       border: 1px solid var(--border);
       border-radius: 10px;
       color: var(--white);
@@ -379,21 +380,22 @@
       -webkit-appearance: none;
     }
     .field input::placeholder,
-    .field textarea::placeholder { color: #444; }
+    .field textarea::placeholder { color: rgba(245,245,240,.72); }
     .field input:focus,
     .field select:focus,
     .field textarea:focus { border-color: var(--green); }
     .field input[type="date"],
     .field input[type="time"] {
+      background: #0D0D0D;
       color-scheme: dark;
     }
     .field input[type="date"]::-webkit-calendar-picker-indicator,
     .field input[type="time"]::-webkit-calendar-picker-indicator {
-      filter: invert(1) brightness(1.8);
+      filter: brightness(0) invert(1);
       opacity: 1;
       cursor: pointer;
     }
-    .field select { cursor: pointer; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; padding-right: 36px; }
+    .field select { cursor: pointer; background-color: #0D0D0D; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23F5F5F0' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; padding-right: 36px; }
     .field select option { background: #1e1e1e; }
     .field textarea { resize: vertical; min-height: 90px; line-height: 1.6; }
 
@@ -438,7 +440,16 @@
       margin-bottom: 36px;
     }
     .footer-brand p { font-size: 0.85rem; color: var(--muted); margin-top: 12px; max-width: 220px; line-height: 1.7; }
-    .social-row { display: flex; gap: 10px; margin-top: 18px; }
+    .social-follow-label {
+      color: var(--green-lite);
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-top: 18px;
+      margin-bottom: 10px;
+    }
+    .social-row { display: flex; gap: 10px; margin-top: 0; }
     .social-row a { width: 34px; height: 34px; border-radius: 50%; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; color: var(--muted); text-decoration: none; font-size: 0.78rem; transition: border-color 0.2s, color 0.2s; }
     .social-row a:hover { border-color: var(--green-lite); color: var(--green-lite); }
     .footer-col h4 { font-size: 0.68rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); margin-bottom: 14px; }
@@ -771,7 +782,7 @@
       <span class="tag">Karikulam</span>
       <h2>Near Axis Bank</h2>
       <!-- EDITABLE: Address -->
-      <p class="address">Upstairs to Medplus Pharmacy, Plot No 1, Kumbakonam - Sirkazhi Hwy, next to Axis Bank Karikulam Branch, Gandhi Nagar, Umamaheswarapuram, Kumbakonam, Tamil Nadu 612103</p>
+      <p class="address">Upstairs to Medplus Pharmacy, Gandhi Nagar, Umamaheswarapuram, Kumbakonam, Tamil Nadu 612103</p>
       <div class="branch-hours">
         <div class="branch-hours-title">Opening Hours</div>
         <div class="branch-hour-row"><span>Monday</span><strong>7:00 AM - 9:00 PM</strong></div>
@@ -841,101 +852,60 @@
             <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
           </div>
           <div>
-            <strong>No Prepayment Needed</strong>
-            Pay only when you visit. No deposits, no hassle.
+            <strong>Experienced Team</strong>
+            Years of hands-on experience you can rely on, every single time.
           </div>
         </div>
       </div>
     </div>
 
-    <div class="booking-form">
+    <form class="booking-form" id="contactBookingForm" novalidate>
       <div class="form-row">
         <div class="field">
-          <label>Your Name <span class="req">*</span></label>
-          <!-- EDITABLE: placeholder text -->
-          <input type="text" placeholder="Full name"/>
+          <label for="contactName">Your Name <span class="req">*</span></label>
+          <input type="text" id="contactName" name="name" placeholder="Full name" required>
         </div>
         <div class="field">
-          <label>Mobile Number <span class="req">*</span></label>
-          <input type="tel" placeholder="10 digit mobile number" inputmode="numeric" autocomplete="tel" maxlength="10" pattern="[0-9]{10}" title="Enter a 10 digit mobile number"/>
+          <label for="contactPhone">Mobile Number <span class="req">*</span></label>
+          <input type="tel" id="contactPhone" name="phone" placeholder="10 digit mobile number" inputmode="numeric" autocomplete="tel" maxlength="10" pattern="[0-9]{10}" title="Enter a 10 digit mobile number" required>
         </div>
       </div>
 
       <div class="field">
-        <label>Choose Outlet <span class="req">*</span></label>
-        <select>
+        <label for="contactBranch">Choose Outlet <span class="req">*</span></label>
+        <select id="contactBranch" name="branch" required>
           <option value="" disabled selected>Select your preferred branch</option>
-          <!-- EDITABLE: Outlet options -->
-          <option>FreshFace Kumbakonam Branch</option>
-          <option>FreshFace Karikulam Branch</option>
+          <option value="Kumbakonam">FreshFace Kumbakonam Branch</option>
+          <option value="Karikulam">FreshFace Karikulam Branch</option>
         </select>
       </div>
 
       <div class="field">
-        <label>Service <span class="req">*</span></label>
-        <select>
-          <option value="" disabled selected>What would you like to book?</option>
-          <!-- EDITABLE: Service options -->
-          <optgroup label="Hair">
-            <option>Haircut &amp; Styling</option>
-            <option>Coloring</option>
-            <option>Chemical Treatment</option>
-            <option>Hair Spa</option>
-            <option>Scalp Treatment</option>
-            <option>Head Massage</option>
-            <option>Shave &amp; Beard</option>
-          </optgroup>
-          <optgroup label="Skin &amp; Facial">
-            <option>Facial</option>
-            <option>Cleanup</option>
-            <option>De-Tan</option>
-            <option>Waxing</option>
-            <option>Threading</option>
-            <option>Bleaching</option>
-            <option>Hydra Facial</option>
-            <option>Manicure</option>
-            <option>Pedicure</option>
-          </optgroup>
-          <optgroup label="Makeup">
-            <option>Bridal Makeup</option>
-            <option>Party Makeup</option>
-            <option>Mehendi</option>
-            <option>Draping &amp; Styling</option>
-          </optgroup>
-          <optgroup label="FreshFace Herbals">
-            <option>Herbal Hair Treatment</option>
-            <option>Herbal Skin Treatment</option>
-            <option>Herbal Shave</option>
-          </optgroup>
-          <optgroup label="Others">
-            <option>Reflexology</option>
-            <option>Piercing &amp; Mole Removal</option>
-            <option>Grooming</option>
-          </optgroup>
-        </select>
+        <label for="contactService">Service <span class="req">*</span></label>
+        <select id="contactService" name="service" required data-service-select></select>
       </div>
 
       <div class="field">
-        <label>Tell us more <span style="color:var(--muted); font-weight:400; text-transform:none; letter-spacing:0;">(optional)</span></label>
-        <textarea placeholder="Describe what you're looking for, any concerns, or preferences - helps us prepare for your visit"></textarea>
+        <label for="contactMessage">Tell us more <span style="color:var(--muted); font-weight:400; text-transform:none; letter-spacing:0;">(optional)</span></label>
+        <textarea id="contactMessage" name="message" placeholder="Describe what you're looking for, any concerns, or preferences - helps us prepare for your visit"></textarea>
       </div>
 
       <div class="form-row">
         <div class="field">
-          <label>Preferred Date <span class="req">*</span></label>
-          <input type="date" required/>
+          <label for="contactDate">Preferred Date <span class="req">*</span></label>
+          <input type="date" id="contactDate" name="date" required>
         </div>
         <div class="field">
-          <label>Preferred Time <span class="req">*</span></label>
-          <input type="time" required/>
+          <label for="contactTime">Preferred Time <span class="req">*</span></label>
+          <input type="time" id="contactTime" name="time" required>
         </div>
       </div>
 
       <p class="form-note"><span>*</span> Name, mobile, outlet, service, preferred date, and preferred time are required. We'll reach out to confirm your slot.</p>
 
-      <a class="btn-submit" href="/home/index.html#booking-section">Book Appointment</a>
+      <button type="submit" class="btn-submit">Book Appointment</button>
 
-    </div>
+    </form>
 
   </section>
 
@@ -946,6 +916,7 @@
         <a href="/home/index.html" class="logo">Fresh<span>Face</span></a>
         <!-- FOOTER -->
         <p>FreshFace Unisex Salon - where everyone gets the care, style, and confidence they deserve.</p>
+        <p class="social-follow-label">Follow Us</p>
         <div class="social-row">
           <a href="https://www.instagram.com/freshface_kumbakonam?igsh=enl0ajhyMTdsOWU1&utm_source=qr" target="_blank" rel="noopener noreferrer" aria-label="Instagram">IG</a>
           <a href="https://www.facebook.com/profile.php?id=100095534824375" target="_blank" rel="noopener noreferrer" aria-label="Facebook">f</a>
@@ -992,6 +963,92 @@
     </div>
   </footer>
 
+<script type="module">
+  import { buildWhatsAppMessage, openWhatsAppBooking } from '/booking-whatsapp.js';
+  import { initBookingServiceSelects } from '/booking-services.js';
+
+  initBookingServiceSelects(document);
+
+  const contactForm = document.getElementById('contactBookingForm');
+  if (contactForm) {
+    const pad = (value) => String(value).padStart(2, '0');
+    const now = new Date();
+    const todayISO = now.getFullYear() + '-' + pad(now.getMonth() + 1) + '-' + pad(now.getDate());
+    contactForm.date.min = todayISO;
+
+    function sameLocalDay(dateA, dateB) {
+      return (
+        dateA.getFullYear() === dateB.getFullYear() &&
+        dateA.getMonth() === dateB.getMonth() &&
+        dateA.getDate() === dateB.getDate()
+      );
+    }
+
+    function updateTimeMin() {
+      const selected = contactForm.date.value;
+      if (!selected) {
+        contactForm.time.min = '';
+        return;
+      }
+      const selectedDate = new Date(selected + 'T00:00:00');
+      if (sameLocalDay(selectedDate, new Date())) {
+        const nowLocal = new Date();
+        contactForm.time.min = pad(nowLocal.getHours()) + ':' + pad(nowLocal.getMinutes());
+      } else {
+        contactForm.time.min = '';
+      }
+    }
+
+    contactForm.date.addEventListener('change', updateTimeMin);
+    updateTimeMin();
+
+    contactForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const form = e.target;
+      const name = form.name.value.trim();
+      const phone = form.phone.value.replace(/\D/g, '').slice(0, 10);
+      form.phone.value = phone;
+      const branch = form.branch.value.trim();
+      const service = form.service.value.trim();
+      const date = form.date.value.trim();
+      const time = form.time.value.trim();
+      const description = form.message.value.trim();
+
+      if (!name) { form.name.focus(); return; }
+      if (!/^[0-9]{10}$/.test(phone)) { form.phone.focus(); return; }
+      if (!branch) { form.branch.focus(); return; }
+      if (!service) { form.service.focus(); return; }
+      if (!date) { form.date.focus(); return; }
+      if (!time) { form.time.focus(); return; }
+
+      const [yy, mm, dd] = date.split('-').map(Number);
+      const [hh, min] = time.split(':').map(Number);
+      const selectedDateTime = new Date(yy, mm - 1, dd, hh, min, 0, 0);
+      if (selectedDateTime.getTime() < Date.now()) {
+        form.time.focus();
+        return;
+      }
+
+      const message = buildWhatsAppMessage({
+        name,
+        phone,
+        branch: branch,
+        service,
+        date,
+        time,
+        description
+      });
+
+      if (openWhatsAppBooking(branch, message)) {
+        form.reset();
+      }
+    });
+
+    contactForm.phone.addEventListener('input', () => {
+      contactForm.phone.value = contactForm.phone.value.replace(/\D/g, '').slice(0, 10);
+    });
+  }
+</script>
 <script>
 (function () {
   const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
