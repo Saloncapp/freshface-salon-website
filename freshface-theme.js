@@ -582,10 +582,10 @@
             <h4>Our Outlets</h4>
             <ul>
               <li><strong style="color:var(--cream);">Kumbakonam</strong> - Next to Gandhi Park, opposite to Rotary Coronation Hospital, Valayapettai Agraharam, Kumbakonam, Tamil Nadu 612001</li>
-              <li><a href="tel:+917380478047">+91 73804 78047</a></li>
+              <li><a href="tel:+917380478047">+91 73-8047-8047</a></li>
               <li><a href="mailto:freshface.townbranch@gmail.com">freshface.townbranch@gmail.com</a></li>
               <li><strong style="color:var(--cream);">Karikulam</strong> - Upstairs to Medplus Pharmacy, Gandhi Nagar, Umamaheswarapuram, Kumbakonam, Tamil Nadu 612103</li>
-              <li><a href="tel:+916380453804">+91 63804 53804</a></li>
+              <li><a href="tel:+916380453804">+91 63-804 53-804</a></li>
               <li><a href="mailto:freshfacekarikulam@gmail.com">freshfacekarikulam@gmail.com</a></li>
             </ul>
           </div>
