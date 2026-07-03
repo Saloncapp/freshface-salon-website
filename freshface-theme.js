@@ -158,8 +158,7 @@
       position: relative;
     }
 
-    .ff-common-logo,
-    .ff-common-footer-logo-wrap {
+    .ff-common-logo {
       display: inline-flex;
       flex-direction: column;
       align-items: flex-start;
@@ -191,6 +190,8 @@
     .footer-logo-wrap .ff-logo-anim img,
     .ff-common-footer-logo-wrap .ff-logo-anim img {
       height: 88px;
+      object-fit: contain;
+      object-position: top left;
     }
 
     header.is-scrolled .ff-logo-anim img,
@@ -257,7 +258,13 @@
     }
 
     .ff-common-footer-logo-wrap {
-      margin-bottom: 14px;
+      display: block;
+      margin: -20px 0 18px;
+      line-height: 0;
+    }
+
+    .ff-common-footer-logo-wrap .ff-logo-anim {
+      display: block;
     }
 
     .ff-common-footer {
@@ -272,6 +279,7 @@
       grid-template-columns: 1.4fr 1fr 1fr 1.25fr;
       gap: 50px;
       margin-bottom: 50px;
+      align-items: start;
     }
 
     .ff-common-footer p,
