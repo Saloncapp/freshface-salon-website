@@ -825,8 +825,8 @@
     <div class="form-left">
       <div class="section-label">Book an Appointment</div>
       <!-- EDITABLE: Form section headline -->
-      <h2>Fill in the details and we'll take it from there.</h2>
-      <p>Fields marked with <span style="color:var(--green-lite)">*</span> are required. Everything else is optional - but helps us prepare better for your visit.</p>
+      <h2>Choose your branch and book online.</h2>
+      <p>Select your preferred outlet and continue to online booking to pick your slot.</p>
 
       <div class="quick-facts">
         <div class="fact">
@@ -860,17 +860,6 @@
     </div>
 
     <form class="booking-form" id="contactBookingForm" novalidate>
-      <div class="form-row">
-        <div class="field">
-          <label for="contactName">Your Name <span class="req">*</span></label>
-          <input type="text" id="contactName" name="name" placeholder="Full name" required>
-        </div>
-        <div class="field">
-          <label for="contactPhone">Mobile Number <span class="req">*</span></label>
-          <input type="tel" id="contactPhone" name="phone" placeholder="10 digit mobile number" inputmode="numeric" autocomplete="tel" maxlength="10" pattern="[0-9]{10}" title="Enter a 10 digit mobile number" required>
-        </div>
-      </div>
-
       <div class="field">
         <label for="contactBranch">Choose Outlet <span class="req">*</span></label>
         <select id="contactBranch" name="branch" required>
@@ -880,28 +869,7 @@
         </select>
       </div>
 
-      <div class="field">
-        <label for="contactService">Service <span class="req">*</span></label>
-        <select id="contactService" name="service" required data-service-select></select>
-      </div>
-
-      <div class="field">
-        <label for="contactMessage">Tell us more <span style="color:var(--muted); font-weight:400; text-transform:none; letter-spacing:0;">(optional)</span></label>
-        <textarea id="contactMessage" name="message" placeholder="Describe what you're looking for, any concerns, or preferences - helps us prepare for your visit"></textarea>
-      </div>
-
-      <div class="form-row">
-        <div class="field">
-          <label for="contactDate">Preferred Date <span class="req">*</span></label>
-          <input type="date" id="contactDate" name="date" required>
-        </div>
-        <div class="field">
-          <label for="contactTime">Preferred Time <span class="req">*</span></label>
-          <input type="time" id="contactTime" name="time" required>
-        </div>
-      </div>
-
-      <p class="form-note"><span>*</span> Name, mobile, outlet, service, preferred date, and preferred time are required. We'll reach out to confirm your slot.</p>
+      <p class="form-note"><span>*</span> Choose an outlet to continue to online booking.</p>
 
       <button type="submit" class="btn-submit">Book Appointment</button>
 
@@ -964,88 +932,20 @@
   </footer>
 
 <script type="module">
-  import { buildWhatsAppMessage, openWhatsAppBooking } from '/booking-whatsapp.js';
-  import { initBookingServiceSelects } from '/booking-services.js';
-
-  initBookingServiceSelects(document);
+  import { openBranchBooking } from '/booking-whatsapp.js';
 
   const contactForm = document.getElementById('contactBookingForm');
   if (contactForm) {
-    const pad = (value) => String(value).padStart(2, '0');
-    const now = new Date();
-    const todayISO = now.getFullYear() + '-' + pad(now.getMonth() + 1) + '-' + pad(now.getDate());
-    contactForm.date.min = todayISO;
-
-    function sameLocalDay(dateA, dateB) {
-      return (
-        dateA.getFullYear() === dateB.getFullYear() &&
-        dateA.getMonth() === dateB.getMonth() &&
-        dateA.getDate() === dateB.getDate()
-      );
-    }
-
-    function updateTimeMin() {
-      const selected = contactForm.date.value;
-      if (!selected) {
-        contactForm.time.min = '';
-        return;
-      }
-      const selectedDate = new Date(selected + 'T00:00:00');
-      if (sameLocalDay(selectedDate, new Date())) {
-        const nowLocal = new Date();
-        contactForm.time.min = pad(nowLocal.getHours()) + ':' + pad(nowLocal.getMinutes());
-      } else {
-        contactForm.time.min = '';
-      }
-    }
-
-    contactForm.date.addEventListener('change', updateTimeMin);
-    updateTimeMin();
-
     contactForm.addEventListener('submit', (e) => {
       e.preventDefault();
-      const form = e.target;
-      const name = form.name.value.trim();
-      const phone = form.phone.value.replace(/\D/g, '').slice(0, 10);
-      form.phone.value = phone;
-      const branch = form.branch.value.trim();
-      const service = form.service.value.trim();
-      const date = form.date.value.trim();
-      const time = form.time.value.trim();
-      const description = form.message.value.trim();
-
-      if (!name) { form.name.focus(); return; }
-      if (!/^[0-9]{10}$/.test(phone)) { form.phone.focus(); return; }
-      if (!branch) { form.branch.focus(); return; }
-      if (!service) { form.service.focus(); return; }
-      if (!date) { form.date.focus(); return; }
-      if (!time) { form.time.focus(); return; }
-
-      const [yy, mm, dd] = date.split('-').map(Number);
-      const [hh, min] = time.split(':').map(Number);
-      const selectedDateTime = new Date(yy, mm - 1, dd, hh, min, 0, 0);
-      if (selectedDateTime.getTime() < Date.now()) {
-        form.time.focus();
+      const branch = contactForm.branch.value.trim();
+      if (!branch) {
+        contactForm.branch.focus();
         return;
       }
-
-      const message = buildWhatsAppMessage({
-        name,
-        phone,
-        branch: branch,
-        service,
-        date,
-        time,
-        description
-      });
-
-      if (openWhatsAppBooking(branch, message)) {
-        form.reset();
+      if (openBranchBooking(branch)) {
+        contactForm.reset();
       }
-    });
-
-    contactForm.phone.addEventListener('input', () => {
-      contactForm.phone.value = contactForm.phone.value.replace(/\D/g, '').slice(0, 10);
     });
   }
 </script>

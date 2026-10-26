@@ -13,88 +13,6 @@
 <link rel="preload" as="image" href="/interiors/interior 2.webp">
 <link rel="preload" as="image" href="/interiors/interior 3.png">
 <link rel="preload" as="image" href="/interiors/interior 4.jpeg">
-<script type="module">
-  const today = new Date();
-  const pad = (value) => String(value).padStart(2, '0');
-  const todayISO = today.getFullYear() + '-' + pad(today.getMonth() + 1) + '-' + pad(today.getDate());
-
-  function sameLocalDay(dateA, dateB) {
-    return (
-      dateA.getFullYear() === dateB.getFullYear() &&
-      dateA.getMonth() === dateB.getMonth() &&
-      dateA.getDate() === dateB.getDate()
-    );
-  }
-
-  function parseLocalDateTime(dateValue, timeValue) {
-    if (!dateValue || !timeValue) return null;
-    const [y, m, d] = dateValue.split('-').map(Number);
-    const [hh, mm] = timeValue.split(':').map(Number);
-    if (!y || !m || !d || Number.isNaN(hh) || Number.isNaN(mm)) return null;
-    return new Date(y, m - 1, d, hh, mm, 0, 0);
-  }
-
-  function initBookingMinDates() {
-    const dateInput = document.getElementById('appointmentDate');
-    const timeInput = document.getElementById('appointmentTime');
-    if (dateInput) dateInput.min = todayISO;
-    if (!dateInput || !timeInput) return;
-
-    function updateTimeMin() {
-      const selected = dateInput.value;
-      if (!selected) {
-        timeInput.min = '';
-        return;
-      }
-      const selectedDate = new Date(selected + 'T00:00:00');
-      if (sameLocalDay(selectedDate, new Date())) {
-        const now = new Date();
-        timeInput.min = pad(now.getHours()) + ':' + pad(now.getMinutes());
-      } else {
-        timeInput.min = '';
-      }
-    }
-
-    dateInput.addEventListener('change', updateTimeMin);
-    updateTimeMin();
-  }
-
-  function initBookingValidation() {
-    const form = document.getElementById('bookingForm');
-    if (!form) return;
-    const dateInput = form.querySelector('input[type=\"date\"][name=\"date\"]');
-    const timeInput = form.querySelector('input[type=\"time\"][name=\"time\"]');
-    if (!dateInput || !timeInput) return;
-
-    function clearCustom() {
-      dateInput.setCustomValidity('');
-      timeInput.setCustomValidity('');
-    }
-
-    dateInput.addEventListener('input', clearCustom);
-    timeInput.addEventListener('input', clearCustom);
-
-    form.addEventListener('submit', () => {
-      clearCustom();
-      const selected = parseLocalDateTime(dateInput.value, timeInput.value);
-      if (!selected) return;
-      if (selected.getTime() < Date.now()) {
-        timeInput.setCustomValidity('Please choose a future time.');
-        timeInput.reportValidity();
-      }
-    }, true);
-  }
-
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => {
-      initBookingMinDates();
-      initBookingValidation();
-    }, { once: true });
-  } else {
-    initBookingMinDates();
-    initBookingValidation();
-  }
-</script>
 <link rel="preload" as="image" href="/interiors/interior 5.jpeg">
 <link rel="preload" as="image" href="/interiors/interior 6.jpeg">
 <style>
@@ -1688,7 +1606,7 @@
 
   <div class="booking-section" id="booking-section">
     <h3>Book an Appointment</h3>
-    <p>Select your preferred branch and send us your booking request - we'll confirm your slot shortly.</p>
+    <p>Select your preferred branch to continue to online booking.</p>
     <div class="booking-card" id="booking-form-card">
       <form class="booking-form" id="bookingForm" novalidate onsubmit="return handleBookingSubmit(event);">
         <div class="branch-select-wrap">
@@ -1699,32 +1617,6 @@
             <option value="Karikulam">FreshFace Karikulam Branch</option>
           </select>
         </div>
-        <div>
-          <label class="form-label" for="bookService">Service *</label>
-          <select id="bookService" name="service" required data-service-select></select>
-        </div>
-        <div class="form-row">
-          <div>
-            <label class="form-label" for="bookName">Your Name *</label>
-            <input type="text" id="bookName" name="name" placeholder="Your Name" required>
-          </div>
-          <div>
-            <label class="form-label" for="bookPhone">Mobile Number *</label>
-            <input type="tel" id="bookPhone" name="phone" placeholder="Phone Number" required inputmode="numeric" autocomplete="tel" maxlength="10" pattern="[0-9]{10}" title="Enter a 10 digit mobile number">
-          </div>
-        </div>
-        <input type="email" name="email" placeholder="Email Address (optional)">
-        <div class="form-row">
-          <div>
-            <label class="form-label" for="appointmentDate">Preferred Date *</label>
-            <input type="date" id="appointmentDate" name="date" required>
-          </div>
-          <div>
-            <label class="form-label" for="appointmentTime">Preferred Time *</label>
-            <input type="time" id="appointmentTime" name="time" required>
-          </div>
-        </div>
-        <textarea name="message" placeholder="Service you'd like to book (optional)"></textarea>
         <button type="submit" class="btn btn-primary btn-shimmer" style="align-self:center;">Book Appointment</button>
       </form>
     </div>
@@ -1803,10 +1695,8 @@
 
 <script type="module" src="/freshface-theme.js"></script>
 <script type="module">
-  import { buildWhatsAppMessage, openWhatsAppBooking } from '/booking-whatsapp.js';
-  import { initBookingServiceSelects } from '/booking-services.js';
-  window.FreshFaceBooking = { buildWhatsAppMessage, openWhatsAppBooking };
-  initBookingServiceSelects(document);
+  import { openBranchBooking } from '/booking-whatsapp.js';
+  window.FreshFaceBooking = { openBranchBooking };
 </script>
 <script>
 (function () {
@@ -2218,34 +2108,20 @@
     setTimeout(() => focusBookingForm(false), 350);
   }
 
-  if (bookingForm) {
-    bookingForm.querySelectorAll('input, select').forEach(field => {
-      field.addEventListener('input', () => {
-        if (field.name === 'phone') {
-          field.value = field.value.replace(/\D/g, '').slice(0, 10);
-        }
-        field.setAttribute('aria-invalid', 'false');
-        field.parentElement.classList.remove('has-error');
-      });
-      field.addEventListener('change', () => {
-        field.setAttribute('aria-invalid', 'false');
-        field.parentElement.classList.remove('has-error');
-      });
+  if (bookingForm && branchSelect) {
+    branchSelect.addEventListener('change', () => {
+      branchSelect.setAttribute('aria-invalid', 'false');
+      branchSelect.parentElement.classList.remove('has-error');
+      const error = branchSelect.parentElement.querySelector('.field-error[data-for="branch"]');
+      if (error) error.textContent = '';
     });
   }
 
   window.handleBookingSubmit = function (e) {
     e.preventDefault();
     const form = e.target;
-    const branch = form.branch.value.trim();
-    const service = form.service.value.trim();
-    const name = form.name.value.trim();
-    const phone = form.phone.value.replace(/\D/g, '').slice(0, 10);
-    form.phone.value = phone;
-    const appointmentDate = form.date.value.trim();
-    const appointmentTime = form.time.value.trim();
-    const description = form.message.value.trim();
-    const email = form.email.value.trim();
+    const branchField = form.branch;
+    const branch = branchField.value.trim();
 
     function ensureErrorElement(field) {
       const existing = field.parentElement.querySelector('.field-error[data-for="' + field.name + '"]');
@@ -2265,67 +2141,18 @@
       field.setAttribute('aria-invalid', message ? 'true' : 'false');
     }
 
-    [
-      form.name,
-      form.phone,
-      form.branch,
-      form.service,
-      form.date,
-      form.time
-    ].forEach(field => setFieldError(field, ''));
+    setFieldError(branchField, '');
 
-    const selectedDateTime = (function () {
-      if (!appointmentDate || !appointmentTime) return null;
-      const parts = appointmentDate.split('-').map(Number);
-      const timeParts = appointmentTime.split(':').map(Number);
-      if (parts.length !== 3 || timeParts.length < 2) return null;
-      const [yy, mm, dd] = parts;
-      const [hh, min] = timeParts;
-      if (!yy || !mm || !dd || Number.isNaN(hh) || Number.isNaN(min)) return null;
-      return new Date(yy, mm - 1, dd, hh, min, 0, 0);
-    })();
-
-    const checks = [
-      { field: form.name, valid: Boolean(name), message: 'Please enter your name.' },
-      { field: form.phone, valid: /^[0-9]{10}$/.test(phone), message: phone ? 'Please enter a valid 10 digit mobile number.' : 'Please enter your mobile number.' },
-      { field: form.branch, valid: Boolean(branch), message: 'Please choose an outlet.' },
-      { field: form.service, valid: Boolean(service), message: 'Please choose a service.' },
-      { field: form.date, valid: Boolean(appointmentDate), message: 'Please choose your preferred date.' },
-      { field: form.time, valid: Boolean(appointmentTime), message: 'Please choose your preferred time.' },
-      { field: form.time, valid: !selectedDateTime || selectedDateTime.getTime() >= Date.now(), message: 'Please choose a future time.' }
-    ];
-
-    checks.forEach(check => {
-      if (!check.valid) setFieldError(check.field, check.message);
-    });
-
-    const firstInvalid = checks.find(check => !check.valid);
-    if (firstInvalid) {
-      firstInvalid.field.focus();
+    if (!branch) {
+      setFieldError(branchField, 'Please choose an outlet.');
+      branchField.focus();
       return false;
     }
 
-    const bookedAt = new Intl.DateTimeFormat('en-IN', {
-      dateStyle: 'medium',
-      timeStyle: 'short'
-    }).format(new Date());
-    const message = window.FreshFaceBooking
-      ? window.FreshFaceBooking.buildWhatsAppMessage({
-          name,
-          phone,
-          branch: branch,
-          service: service,
-          date: appointmentDate,
-          time: appointmentTime,
-          description,
-          email
-        })
-      : '';
-
-    if (!message || !window.FreshFaceBooking?.openWhatsAppBooking(branch, message)) {
+    if (!window.FreshFaceBooking?.openBranchBooking(branch)) {
       return false;
     }
-    showBookingToast('Opening WhatsApp to confirm your booking...');
+    showBookingToast('Opening online booking for your selected branch...');
     form.reset();
     return false;
   };
